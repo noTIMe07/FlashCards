@@ -9,7 +9,7 @@ public class Main {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setLayout(new BorderLayout());
-
+//HALLOO
             // ==== Sidebar panel ====
             JPanel sidebar = new JPanel();
             sidebar.setLayout(new BorderLayout());
