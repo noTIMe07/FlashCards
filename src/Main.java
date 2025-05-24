@@ -1,6 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
@@ -12,41 +12,80 @@ public class Main {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setLayout(new BorderLayout());
 
-            // ==== Sidebar panel ====
+            // === Retro palette ===
+            Color bgColor = new Color(248, 236, 210);     // Light paper
+            Color panelColor = new Color(254, 209, 121);  // Yellow-orange
+            Color accentColor = new Color(255, 120, 103); // Coral
+            Color outlineColor = new Color(50, 50, 50);   // Strong outline
+            Color buttonColor = new Color(130, 180, 255); // Sky blue
+
+            Font logoFont = new Font("Comic Sans MS", Font.BOLD, 26);
+            Font buttonFont = new Font("Comic Sans MS", Font.PLAIN, 16);
+            Font folderFont = new Font("Comic Sans MS", Font.PLAIN, 14);
+
+            // === Sidebar ===
             JPanel sidebar = new JPanel();
-            sidebar.setLayout(new BorderLayout());
-            sidebar.setPreferredSize(new Dimension(250, 0));
+            sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+            sidebar.setPreferredSize(new Dimension(280, 0));
+            sidebar.setBackground(bgColor);
+            sidebar.setBorder(new MatteBorder(0, 0, 0, 4, outlineColor));
 
-            // Top: Logo
+            // === Logo ===
             JLabel logo = new JLabel("Flashcards", SwingConstants.CENTER);
-            logo.setFont(new Font("SansSerif", Font.BOLD, 20));
-            logo.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-            sidebar.add(logo, BorderLayout.NORTH);
+            logo.setFont(logoFont);
+            logo.setForeground(accentColor);
+            logo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            logo.setBorder(new EmptyBorder(30, 0, 20, 0));
+            sidebar.add(logo);
 
-            // Center: Folder list inside a scroll pane
+            sidebar.add(Box.createVerticalGlue());
+
+            // === Add Folder Button ===
+            JButton addFolderButton = new JButton("Add Folder", UIManager.getIcon("FileView.directoryIcon"));
+            addFolderButton.setFont(buttonFont);
+            addFolderButton.setBackground(buttonColor);
+            addFolderButton.setForeground(Color.BLACK);
+            addFolderButton.setFocusPainted(false);
+            addFolderButton.setBorder(new CompoundBorder(
+                    new LineBorder(outlineColor, 2, true),
+                    new EmptyBorder(10, 20, 10, 20)
+            ));
+            addFolderButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            addFolderButton.setMaximumSize(new Dimension(240, 60));
+            sidebar.add(addFolderButton);
+
+            sidebar.add(Box.createVerticalGlue());
+
+            // === Folder List Scroll Pane ===
             JPanel folderListPanel = new JPanel();
             folderListPanel.setLayout(new BoxLayout(folderListPanel, BoxLayout.Y_AXIS));
+            folderListPanel.setBackground(bgColor);
+
             JScrollPane scrollPane = new JScrollPane(folderListPanel);
-            sidebar.add(scrollPane, BorderLayout.CENTER);
+            scrollPane.setPreferredSize(new Dimension(300, 300));
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            scrollPane.getViewport().setBackground(bgColor);
+            scrollPane.setOpaque(false);
+            sidebar.add(scrollPane);
 
-            // Bottom: Add Folder button
-            JButton addFolderButton = new JButton("Add Folder");
-            addFolderButton.setPreferredSize(new Dimension(250, 40));
-            sidebar.add(addFolderButton, BorderLayout.SOUTH);
-
-            // Button logic to add new Folder
+            // === Folder Button Logic ===
             addFolderButton.addActionListener(e -> {
-                folderListPanel.add(new Folder());
-                folderListPanel.revalidate(); // triggers layout update
-                folderListPanel.repaint();    // triggers paint
+                folderListPanel.add(new Folder(panelColor, outlineColor, folderFont));
+                folderListPanel.revalidate();
+                folderListPanel.repaint();
             });
 
-            // Add sidebar to main frame
+            // === Center Panel ===
+            JPanel centerPanel = new JPanel();
+            centerPanel.setBackground(new Color(232, 220, 200)); // muted beige
+            centerPanel.setLayout(new GridBagLayout());
+            JLabel centerLabel = new JLabel("Welcome to Flashcards!");
+            centerLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 28));
+            centerLabel.setForeground(accentColor);
+            centerPanel.add(centerLabel);
+
             frame.add(sidebar, BorderLayout.WEST);
-
-            // Dummy center panel
-            frame.add(new JPanel(), BorderLayout.CENTER);
-
+            frame.add(centerPanel, BorderLayout.CENTER);
             frame.setVisible(true);
         });
     }
