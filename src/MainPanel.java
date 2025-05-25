@@ -6,7 +6,7 @@ public class MainPanel extends JPanel {
         setBackground(new Color(232, 220, 200));
         setLayout(new GridBagLayout());
 
-       FlashcardPanel flashCard = new FlashcardPanel ("What is the capital of France" , "Paris");
-               add(flashCard);
+        FlashcardPanel flashCard = new FlashcardPanel("Question", "Answer");
+        add(flashCard);
     }
 }

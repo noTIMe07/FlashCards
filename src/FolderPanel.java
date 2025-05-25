@@ -1,9 +1,24 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.util.List;
+import java.io.File;
+import java.io.IOException;
 
 public class FolderPanel extends JPanel {
+
+    private String name = "New Folder 1";
+    private JLabel nameLabel;
+    private File flashcardData;
+
     public FolderPanel() {
+        setUpLayout();
+        //createFile();
+
+    }
+
+    private void setUpLayout(){
+        //Folder Layout and Style
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setMaximumSize(new Dimension(200, 60));
         setBackground(Style.FOLDER_COLOR);
@@ -13,7 +28,8 @@ public class FolderPanel extends JPanel {
         ));
         setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel nameLabel = new JLabel("New Folder", JLabel.LEFT);
+        //Folder name
+        nameLabel = new JLabel(name, JLabel.LEFT);
         nameLabel.setFont(Style.FOLDER_FONT);
         nameLabel.setForeground(Color.DARK_GRAY);
         add(nameLabel);
@@ -34,12 +50,22 @@ public class FolderPanel extends JPanel {
         recycleButton.setMaximumSize(new Dimension(32, 32));
 
         //Make Button invisible
-        recycleButton.setContentAreaFilled(false);  // No background
-        recycleButton.setBorderPainted(false);      // No border
-        recycleButton.setFocusPainted(false);       // No focus outline
-        recycleButton.setOpaque(false);             // Transparent
+        recycleButton.setContentAreaFilled(false);
+        recycleButton.setBorderPainted(false);
+        recycleButton.setFocusPainted(false);
+        recycleButton.setOpaque(false);
 
         recycleButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         add(recycleButton);
+    }
+
+    private void createFile(){
+        try {
+            flashcardData = new File("./src/FlashCardDataFolder/"+name+".text");
+            flashcardData.createNewFile();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
