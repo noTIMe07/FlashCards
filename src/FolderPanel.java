@@ -1,19 +1,30 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;
+import com.google.gson.Gson;
 
 public class FolderPanel extends JPanel {
 
-    private String name = "New Folder 1";
+    private String name;
     private JLabel nameLabel;
-    private File flashcardData;
+    private List<Flashcard> flashcards;
+    private String filename;
+    Gson gson;
 
-    public FolderPanel() {
+    public FolderPanel(String name_) {
+        name = name_;
         setUpLayout();
-        //createFile();
+
+        flashcards = new ArrayList<>();
+        filename = "./src/FlashcardStorage/"+name.replaceAll("\\s","")+".json";
+        gson = new Gson();
+
+        createFile();
 
     }
 
@@ -59,13 +70,25 @@ public class FolderPanel extends JPanel {
         add(recycleButton);
     }
 
-    private void createFile(){
-        try {
-            flashcardData = new File("./src/FlashCardDataFolder/"+name+".text");
-            flashcardData.createNewFile();
+    public void createFile(){
+        if(new File(filename).isFile()){
+            System.out.println("JSON file already exists");
+            return;
         }
-        catch (IOException e){
+        try (FileWriter writer = new FileWriter(filename)) {
+            gson.toJson(flashcards, writer);
+            System.out.println("JSON file created successfully");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void addFlashcard(String question, String answer, Boolean leaned){
+        flashcards.add(new Flashcard(question, answer, leaned));
+    }
+
+    public void removeFlashcard(String question, String answer, Boolean leaned){
+        flashcards.remove(new Flashcard(question, answer, leaned));
+    }
+
 }

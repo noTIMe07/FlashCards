@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.io.File;
+
 
 public class SidebarPanel extends JPanel {
     private JPanel folderListPanel;
@@ -55,16 +57,35 @@ public class SidebarPanel extends JPanel {
         scrollPane.getViewport().setBackground(Style.BACKGROUND_COLOR);
         add(scrollPane);
 
+        initialFolderSetUp();
+
         folderButton.addActionListener(e -> {
-
-            //add Folder to List
-            folderListPanel.add(new FolderPanel());
-
-            //add space in between to list
-            folderListPanel.add(new Box.Filler(new Dimension(0, 3),new Dimension(0, 5), new Dimension(0, 8)));
-
-            folderListPanel.revalidate();
-            folderListPanel.repaint();
+            createFolder("Folder1");
         });
+    }
+
+    public void createFolder(String name){
+        //add Folder to List
+        folderListPanel.add(new FolderPanel(name));
+
+        //add space in between to list
+        folderListPanel.add(new Box.Filler(new Dimension(0, 3),new Dimension(0, 5), new Dimension(0, 8)));
+
+        folderListPanel.revalidate();
+        folderListPanel.repaint();
+    }
+
+    public void initialFolderSetUp(){
+        File folder = new File("./src/FlashCardStorage");
+        File[] jsonFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
+
+        if (jsonFiles != null) {
+            for (File jsonFile : jsonFiles) {
+                String fileName = jsonFile.getName();
+                String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+
+                createFolder(nameWithoutExtension);
+            }
+        }
     }
 }

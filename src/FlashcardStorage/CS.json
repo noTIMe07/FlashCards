@@ -1,0 +1,17 @@
+[
+  {
+    "front": "What is a String",
+    "back": "A sequence of characters",
+    "learned": false
+  },
+  {
+    "front": "What is Java",
+    "back": "An object-oriented programming language",
+    "learned": false
+  },
+  {
+    "front": "Who founded Apple",
+    "back": "Steve Jobs",
+    "learned": false
+  }
+]
