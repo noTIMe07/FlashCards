@@ -11,9 +11,10 @@ import com.google.gson.Gson;
 public class FolderPanel extends JPanel {
 
     private String name;
-    private JLabel nameLabel;
+    private JButton folderButton;
     private List<Flashcard> flashcards;
     private String filename;
+    private JButton recycleButton;
     Gson gson;
 
     public FolderPanel(String name_) {
@@ -26,6 +27,10 @@ public class FolderPanel extends JPanel {
 
         createFile();
 
+        folderButton.addActionListener(e -> {
+            System.out.println("Test1");
+        });
+
     }
 
     private void setUpLayout(){
@@ -35,15 +40,32 @@ public class FolderPanel extends JPanel {
         setBackground(Style.FOLDER_COLOR);
         setBorder(new CompoundBorder(
                 new LineBorder(Style.OUTLINE_COLOR, 2, false),
-                new EmptyBorder(10, 15, 10, 15)
+                new EmptyBorder(0, 0, 0, 0)
         ));
         setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //Folder name
-        nameLabel = new JLabel(name, JLabel.LEFT);
-        nameLabel.setFont(Style.FOLDER_FONT);
-        nameLabel.setForeground(Color.DARK_GRAY);
-        add(nameLabel);
+        folderButton = new JButton(name);
+        folderButton.setFont(Style.FOLDER_FONT);
+        folderButton.setForeground(Color.DARK_GRAY);
+        folderButton.setBorderPainted(false);
+        folderButton.setFocusPainted(false);
+        folderButton.setContentAreaFilled(false);
+        folderButton.setOpaque(false);
+        folderButton.setBorder(null);
+
+        folderButton.setPreferredSize(new Dimension(150, 60));
+        folderButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        folderButton.setMinimumSize(new Dimension(50, 60));
+        folderButton.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        JPanel buttonWrapper = new JPanel();
+        buttonWrapper.setLayout(new BorderLayout());
+        buttonWrapper.setOpaque(false);
+        buttonWrapper.add(folderButton, BorderLayout.CENTER);
+        buttonWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        buttonWrapper.setPreferredSize(new Dimension(150, 60));
+        add(buttonWrapper);
 
         //Space in the middle
         add(Box.createHorizontalGlue());
@@ -54,7 +76,7 @@ public class FolderPanel extends JPanel {
         ImageIcon scaledRecycleIcon = new ImageIcon(image);
 
         //recycleButton
-        JButton recycleButton = new JButton(scaledRecycleIcon);
+        recycleButton = new JButton(scaledRecycleIcon);
 
         recycleButton.setPreferredSize(new Dimension(32, 32));
         recycleButton.setMinimumSize(new Dimension(32, 32));
@@ -83,6 +105,7 @@ public class FolderPanel extends JPanel {
         }
     }
 
+
     public void addFlashcard(String question, String answer, Boolean leaned){
         flashcards.add(new Flashcard(question, answer, leaned));
     }
@@ -90,5 +113,6 @@ public class FolderPanel extends JPanel {
     public void removeFlashcard(String question, String answer, Boolean leaned){
         flashcards.remove(new Flashcard(question, answer, leaned));
     }
+
 
 }
