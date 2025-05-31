@@ -3,6 +3,7 @@ import java.awt.*;
 public class Style {
     public static final Color BACKGROUND_COLOR = new Color(83, 71, 57);
     public static final Color FOLDER_COLOR = new Color(152, 147, 218);
+    public static final Color FOLDER_HIGHLIGHTCOLOR = new Color(203, 198, 255);
     public static final Color ACCENT_COLOR = new Color(255, 120, 103);
     public static final Color OUTLINE_COLOR = new Color(50, 50, 50);
     public static final Color BUTTON_COLOR = new Color(130, 180, 255);

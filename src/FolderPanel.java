@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+
 import com.google.gson.Gson;
 
 public class FolderPanel extends JPanel {
@@ -19,25 +21,28 @@ public class FolderPanel extends JPanel {
 
     public FolderPanel(String name_) {
         name = name_;
-        setUpLayout();
 
-        flashcards = new ArrayList<>();
-        filename = "./src/FlashcardStorage/"+name.replaceAll("\\s","")+".json";
-        gson = new Gson();
-
+        setUp();
         createFile();
 
         folderButton.addActionListener(e -> {
-            System.out.println("Test1");
+            Globals.setCurrentFolderPath(filename);
         });
 
     }
 
-    private void setUpLayout(){
+    private void setUp(){
+        flashcards = new ArrayList<>();
+        filename = "./src/FlashcardStorage/"+name.replaceAll("\\s","")+".json";
+        gson = new Gson();
+
         //Folder Layout and Style
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setMaximumSize(new Dimension(200, 60));
-        setBackground(Style.FOLDER_COLOR);
+        setFolderColor();
+        Globals.addPropertyChangeListener(evt -> {
+            setFolderColor();
+        });
         setBorder(new CompoundBorder(
                 new LineBorder(Style.OUTLINE_COLOR, 2, false),
                 new EmptyBorder(0, 0, 0, 0)
@@ -90,6 +95,15 @@ public class FolderPanel extends JPanel {
 
         recycleButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         add(recycleButton);
+    }
+
+    public void setFolderColor(){
+        if(Objects.equals(filename, Globals.getCurrentFolderPath())){
+            setBackground(Style.FOLDER_HIGHLIGHTCOLOR);
+        }
+        else {
+            setBackground(Style.FOLDER_COLOR);
+        }
     }
 
     public void createFile(){

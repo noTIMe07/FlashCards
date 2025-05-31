@@ -82,9 +82,10 @@ public class SidebarPanel extends JPanel {
         if (jsonFiles != null) {
             for (File jsonFile : jsonFiles) {
                 String fileName = jsonFile.getName();
-                String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
-
-                createFolder(nameWithoutExtension);
+                if(!fileName.equals("Default.json")){
+                    String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+                    createFolder(nameWithoutExtension);
+                }
             }
         }
     }

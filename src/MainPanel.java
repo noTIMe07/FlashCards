@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 
 public class MainPanel extends JPanel {
     FlashcardPanel flashcardPanel;
@@ -20,20 +21,24 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         setUp();
         loadFile();
-        System.out.println(flashcards);
         study();
         add(flashcardPanel);
     }
 
     public void study(){
+        if(!Objects.equals(fileName, Globals.getCurrentFolderPath())){
+            fileName=Globals.getCurrentFolderPath();
+            loadFile();
+        }
         for(Flashcard card : flashcards){
             if(!card.getLearned()) {
                flashcardPanel.updateFlashcard(card.getFront(), card.getBack());
                 currentFlashcard = card;
+                flashcardPanel.setVisible(true);
                 return;
             }
         }
-        flashcardPanel.updateFlashcard("last Card", "back, still need to implement default background");
+        flashcardPanel.setVisible(false);
     }
 
     public void setLearned(boolean learned) {
@@ -51,7 +56,7 @@ public class MainPanel extends JPanel {
         study();
     }
 
-    private static void loadFile(){
+    private void loadFile(){
         try (FileReader reader = new FileReader(fileName)) {
             Gson gson = new Gson();
 
@@ -63,7 +68,7 @@ public class MainPanel extends JPanel {
         }
     }
 
-    public static void saveFile(){
+    public void saveFile(){
         Gson gson = new GsonBuilder().setPrettyPrinting().create(); // Pretty JSON output
 
         try (FileWriter writer = new FileWriter(fileName)) {
@@ -77,9 +82,12 @@ public class MainPanel extends JPanel {
         setBackground(new Color(232, 220, 200));
         setLayout(new GridBagLayout());
 
-        fileName = "./src/FlashcardStorage/CS.json";
+        fileName = Globals.getCurrentFolderPath();
         flashcardPanel = new FlashcardPanel("Start", "Back", this);
 
+        Globals.addPropertyChangeListener(evt -> {
+            study();
+        });
     }
 
 }
