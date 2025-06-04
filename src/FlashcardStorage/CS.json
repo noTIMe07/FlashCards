@@ -7,11 +7,11 @@
   {
     "front": "What is a String",
     "back": "A sequence of characters",
-    "learned": false
+    "learned": true
   },
   {
     "front": "What is Java",
     "back": "An object-oriented programming language",
-    "learned": false
+    "learned": true
   }
 ]

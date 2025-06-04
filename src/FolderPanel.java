@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,6 @@ public class FolderPanel extends JPanel {
         name = name_;
 
         setUp();
-        createFile();
 
         folderButton.addActionListener(e -> {
             Globals.setCurrentFolderPath(filename);
@@ -35,6 +36,7 @@ public class FolderPanel extends JPanel {
         flashcards = new ArrayList<>();
         filename = "./src/FlashcardStorage/"+name.replaceAll("\\s","")+".json";
         gson = new Gson();
+        createFile();
 
         //Folder Layout and Style
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -67,7 +69,55 @@ public class FolderPanel extends JPanel {
         JPanel buttonWrapper = new JPanel();
         buttonWrapper.setLayout(new BorderLayout());
         buttonWrapper.setOpaque(false);
-        buttonWrapper.add(folderButton, BorderLayout.CENTER);
+
+        if(name.isEmpty()){
+            JTextField nameField = new JTextField("New Folder");
+            nameField.setFont(Style.FOLDER_FONT);
+            nameField.setOpaque(false);
+            nameField.setBorder(null);
+            nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, nameField.getPreferredSize().height));
+            nameField.setHorizontalAlignment(JTextField.CENTER);
+            Globals.setCurrentFolderPath(filename);
+            buttonWrapper.add(nameField);
+            SwingUtilities.invokeLater(() -> nameField.requestFocusInWindow());
+
+            nameField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    String text = nameField.getText();
+                    if (text.matches("[a-zA-Z0-9 ]*")) {
+                        nameField.setForeground(Color.BLACK); // Valid input
+                    } else {
+                        nameField.setForeground(Color.RED);   // Invalid input
+                    }
+                }
+            });
+
+            nameField.addActionListener(e -> {
+                name = nameField.getText().trim();
+
+                if (!name.matches("[a-zA-Z0-9 ]*")||name.isEmpty()||(new File("./src/FlashcardStorage/"+name+".json").exists())){
+                    return;
+                }
+
+                new File(filename).renameTo(new File("./src/FlashcardStorage/"+name+".json"));
+                filename="./src/FlashcardStorage/"+name+".json";
+                Globals.setCurrentFolderPath(filename);
+
+                // Replace text field with label
+                int index = buttonWrapper.getComponentZOrder(nameField);
+                buttonWrapper.remove(nameField);
+                folderButton.setText(name);
+                buttonWrapper.add(folderButton, index);
+                buttonWrapper.revalidate();
+                buttonWrapper.repaint();
+            });
+        }
+        else{
+            buttonWrapper.add(folderButton, BorderLayout.CENTER);
+            buttonWrapper.revalidate();
+            buttonWrapper.repaint();
+        }
         buttonWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
         buttonWrapper.setPreferredSize(new Dimension(150, 60));
         add(buttonWrapper);
@@ -108,12 +158,10 @@ public class FolderPanel extends JPanel {
 
     public void createFile(){
         if(new File(filename).isFile()){
-            System.out.println("JSON file already exists");
             return;
         }
         try (FileWriter writer = new FileWriter(filename)) {
-            gson.toJson(flashcards, writer);
-            System.out.println("JSON file created successfully");
+            gson.toJson(flashcards, writer);;
         } catch (IOException e) {
             e.printStackTrace();
         }

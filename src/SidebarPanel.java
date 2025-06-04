@@ -6,8 +6,11 @@ import java.io.File;
 
 public class SidebarPanel extends JPanel {
     private JPanel folderListPanel;
+    private boolean folderCreationCooldown;
 
     public SidebarPanel() {
+
+        folderCreationCooldown = false;
 
         //SidebarPanel
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -60,7 +63,14 @@ public class SidebarPanel extends JPanel {
         initialFolderSetUp();
 
         folderButton.addActionListener(e -> {
-            createFolder("Folder1");
+            if (folderCreationCooldown) return;
+            folderCreationCooldown = true;
+
+            createFolder("");
+
+            new javax.swing.Timer(500, evt -> {
+                folderCreationCooldown = false;
+            }).start();
         });
     }
 

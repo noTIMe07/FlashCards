@@ -7,11 +7,11 @@
   {
     "front": "When did the United States declare there independency?",
     "back": "1776",
-    "learned": false
+    "learned": true
   },
   {
     "front": "Which dinosaur is the most famous?",
     "back": "T-Rex",
-    "learned": false
+    "learned": true
   }
 ]
