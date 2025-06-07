@@ -7,11 +7,18 @@ import java.io.File;
 public class SidebarPanel extends JPanel {
     private JPanel folderListPanel;
     private boolean folderCreationCooldown;
+    private JButton folderButton;
 
     public SidebarPanel() {
 
         folderCreationCooldown = false;
 
+        setLayout();
+
+        initialFolderSetUp();
+    }
+
+    public void setLayout(){
         //SidebarPanel
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 0));
@@ -32,7 +39,7 @@ public class SidebarPanel extends JPanel {
         ImageIcon scaledFolderIcon = new ImageIcon(image);
 
         //folderButton
-        JButton folderButton = new JButton("New Folder", scaledFolderIcon);
+        folderButton = new JButton("New Folder", scaledFolderIcon);
         folderButton.setFont(Style.BUTTON_FONT);
         folderButton.setBackground(Style.BUTTON_COLOR);
         folderButton.setForeground(Color.BLACK);
@@ -44,6 +51,18 @@ public class SidebarPanel extends JPanel {
         folderButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         folderButton.setMaximumSize(new Dimension(230, 60));
         add(folderButton);
+
+        //When add folder button pressed add folder with cooldown
+        folderButton.addActionListener(e -> {
+            if (folderCreationCooldown) return;
+            folderCreationCooldown = true;
+
+            createFolder("");
+
+            new javax.swing.Timer(500, evt -> {
+                folderCreationCooldown = false;
+            }).start();
+        });
 
         //space in between
         add(new Box.Filler(new Dimension(0, 10),new Dimension(0, 25), new Dimension(0, 50)));
@@ -59,19 +78,6 @@ public class SidebarPanel extends JPanel {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getViewport().setBackground(Style.BACKGROUND_COLOR);
         add(scrollPane);
-
-        initialFolderSetUp();
-
-        folderButton.addActionListener(e -> {
-            if (folderCreationCooldown) return;
-            folderCreationCooldown = true;
-
-            createFolder("");
-
-            new javax.swing.Timer(500, evt -> {
-                folderCreationCooldown = false;
-            }).start();
-        });
     }
 
     public void createFolder(String name){
@@ -86,9 +92,11 @@ public class SidebarPanel extends JPanel {
     }
 
     public void initialFolderSetUp(){
+        //Array with every .json file in folder
         File folder = new File("./src/FlashCardStorage");
         File[] jsonFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
 
+        //If there is a json File then go through every entry in json Files and create Folder for every entry
         if (jsonFiles != null) {
             for (File jsonFile : jsonFiles) {
                 String fileName = jsonFile.getName();

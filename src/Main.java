@@ -9,4 +9,6 @@ public class Main {
     }
 }
 
-//when folder user input and focus lost submit file
+//delete folder function
+
+//add edit remove cards
