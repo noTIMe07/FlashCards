@@ -79,7 +79,7 @@ public class MainPanel extends JPanel {
     }
 
     private void setUp(){
-        setBackground(new Color(232, 220, 200));
+        setBackground(Style.MAINPANEL_COLOR);
         setLayout(new GridBagLayout());
 
         fileName = Globals.getCurrentFolderPath();

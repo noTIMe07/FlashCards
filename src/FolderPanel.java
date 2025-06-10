@@ -21,6 +21,7 @@ public class FolderPanel extends JPanel {
     private String filename;
     private JButton recycleButton;
     private JPanel wrapper;
+    private JPanel inner;
     Gson gson;
 
     public FolderPanel(String name_) {
@@ -29,31 +30,35 @@ public class FolderPanel extends JPanel {
         setUp();
     }
 
+    //Set variables, createFile(), setLayout()
     private void setUp(){
         //set variables
         flashcards = new ArrayList<>();
-        filename = "./src/FlashcardStorage/"+name.replaceAll("\\s","")+".json";
+        filename = "./src/FlashcardStorage/"+name+".json";
         gson = new Gson();
 
         createFile();
         setLayout();
     }
 
+    //Updates folder color if folder is clicked
     public void setFolderColor(){
         //if this folder is the current folder, highlight the folder
         if(Objects.equals(filename, Globals.getCurrentFolderPath())){
-            setBackground(Style.FOLDER_HIGHLIGHTCOLOR);
+            inner.setBackground(Style.FOLDER_HIGHLIGHTCOLOR);
         }
         else {
-            setBackground(Style.FOLDER_COLOR);
+            inner.setBackground(Style.FOLDER_COLOR);
         }
     }
 
+    //Creates file with filename if file doesn't exist yet
     public void createFile(){
         //creates a new file if the file doesn't exist yet
         if(new File(filename).isFile()){
             return;
         }
+        System.out.println(filename);
         try (FileWriter writer = new FileWriter(filename)) {
             gson.toJson(flashcards, writer);;
         } catch (IOException e) {
@@ -61,21 +66,29 @@ public class FolderPanel extends JPanel {
         }
     }
 
+    //Add folder button, wrapper, and recycle button to layout
     public void setLayout(){
-        //Folder Panel Layout
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setLayout(new BorderLayout());
         setMaximumSize(new Dimension(200, 60));
+        setBackground(Style.BACKGROUND_COLOR);
+        //Create invisible gap
+        setBorder(new EmptyBorder(2, 0, 2, 0));
+
+        inner = new JPanel();
+
+        //Inner Panel Layout
+        inner.setLayout(new BoxLayout(inner, BoxLayout.X_AXIS));
         //Folder color
         setFolderColor();
         Globals.addPropertyChangeListener(evt -> {
             setFolderColor();
         });
         //Folder Border
-        setBorder(new CompoundBorder(
+        inner.setBorder(new CompoundBorder(
                 new LineBorder(Style.OUTLINE_COLOR, 2, false),
                 new EmptyBorder(0, 0, 0, 0)
         ));
-        setAlignmentX(Component.CENTER_ALIGNMENT);
+        inner.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //Folder name on Folder Button
         folderButton = new JButton(name);
@@ -114,10 +127,10 @@ public class FolderPanel extends JPanel {
         //Wrapper Size
         wrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
         wrapper.setPreferredSize(new Dimension(150, 60));
-        add(wrapper);
+        inner.add(wrapper);
 
         //Space in the middle
-        add(Box.createHorizontalGlue());
+        inner.add(Box.createHorizontalGlue());
 
         //Recycle Bin Icon
         ImageIcon recycleIcon = new ImageIcon(getClass().getResource("/Icons/recycle_empty.png"));
@@ -139,9 +152,21 @@ public class FolderPanel extends JPanel {
 
         //Add recycle Button
         recycleButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        add(recycleButton);
+        inner.add(recycleButton);
+
+        recycleButton.addActionListener(e -> {
+            //If user doesn't  confirm, then return
+            if (!ConfirmDialog.showConfirmation(recycleButton, name)) {
+                return;
+            }
+            System.out.println("Test");
+            deleteFolder();
+        });
+
+        add(inner, BorderLayout.CENTER);
     }
 
+    //Save name, set folder name to name, replace text field with label
     private boolean submitNameField(JTextField nameField){
         //Get name from Name Field
         name = nameField.getText().trim();
@@ -153,6 +178,7 @@ public class FolderPanel extends JPanel {
         new File(filename).renameTo(new File("./src/FlashcardStorage/"+name+".json"));
         //Update file name and current active folder
         filename="./src/FlashcardStorage/"+name+".json";
+        System.out.println(filename);
         Globals.setCurrentFolderPath(filename);
 
         // Replace text field with label
@@ -166,6 +192,7 @@ public class FolderPanel extends JPanel {
         return true;
     }
 
+    //Add name field to UI
     private void addNameField(){
         JTextField nameField = new JTextField("New Folder");
         //Fame Field style
@@ -201,12 +228,24 @@ public class FolderPanel extends JPanel {
         });
         //When enter pressed then submit Name Field
         nameField.addActionListener(e -> {
-            submitNameField(nameField);
+            //transfer Focus so focus lost gets triggered
+            nameField.transferFocus();
         });
     }
 
     public void deleteFolder(){
+        //Check if file exists, then delete
+        if (new File(filename).exists()) new File(filename).delete();
 
+        //If parent exist, remove itself from parent
+        Container parent = this.getParent();
+        if (parent != null) {
+            parent.remove(this); // remove self from JPanel
+
+            // Refresh UI
+            parent.revalidate();
+            parent.repaint();
+        }
     }
 
     public void addFlashcard(String question, String answer, Boolean leaned){

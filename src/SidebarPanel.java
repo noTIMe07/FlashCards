@@ -83,10 +83,6 @@ public class SidebarPanel extends JPanel {
     public void createFolder(String name){
         //add Folder to List
         folderListPanel.add(new FolderPanel(name));
-
-        //add space in between to list
-        folderListPanel.add(new Box.Filler(new Dimension(0, 3),new Dimension(0, 5), new Dimension(0, 8)));
-
         folderListPanel.revalidate();
         folderListPanel.repaint();
     }
@@ -101,8 +97,14 @@ public class SidebarPanel extends JPanel {
             for (File jsonFile : jsonFiles) {
                 String fileName = jsonFile.getName();
                 if(!fileName.equals("Default.json")){
-                    String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
-                    createFolder(nameWithoutExtension);
+                    //Delete empty files
+                    if(fileName.equals(".json")){
+                        new File("./src/FlashcardStorage/"+fileName).delete();
+                    }
+                    else{
+                        String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+                        createFolder(nameWithoutExtension);
+                    }
                 }
             }
         }
