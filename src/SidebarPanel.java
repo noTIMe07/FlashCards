@@ -22,34 +22,48 @@ public class SidebarPanel extends JPanel {
         //SidebarPanel
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 0));
-        setBackground(Style.BACKGROUND_COLOR);
-        setBorder(new MatteBorder(0, 0, 0, 4, Style.OUTLINE_COLOR));
+        setBackground(Style.SIDEBARPANEL_COLOR);
+        setBorder(new MatteBorder(0, 0, 0, 0, Style.OUTLINE_COLOR));
 
         //Logo on the top
-        JLabel logo = new JLabel("Flashcards", SwingConstants.CENTER);
-        logo.setFont(Style.LOGO_FONT);
-        logo.setForeground(Style.ACCENT_COLOR);
+        int logoSize = 150;
+        Image logoImage = (new ImageIcon(getClass().getResource("/Images/logo.png"))).getImage();
+        logoImage= logoImage.getScaledInstance(logoSize, logoSize, Image.SCALE_FAST);
+        JLabel logo = new JLabel(new ImageIcon(logoImage), SwingConstants.CENTER);
         logo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            logo.setPreferredSize(new Dimension(logoSize, logoSize));
+            logo.setMaximumSize(new Dimension(logoSize, logoSize));
+        logo.setMinimumSize(new Dimension(logoSize, logoSize));
         logo.setBorder(new EmptyBorder(30, 0, 30, 0));
         add(logo);
 
         //folderIcon
         ImageIcon folderIcon = new ImageIcon(getClass().getResource("/Icons/folder_blank.png"));
-        Image image = folderIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        ImageIcon scaledFolderIcon = new ImageIcon(image);
+        JLabel folderIconLabel = new JLabel(folderIcon);
+
+        JLabel folderTextLabel = new JLabel("New Folder");
+        folderTextLabel.setFont(Style.BUTTON_FONT);
+        folderTextLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        folderTextLabel.setBackground(Style.ADDFOLDERBUTTON_COLOR);
+        folderTextLabel.setForeground(Color.BLACK);
+        folderTextLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //folderButton
-        folderButton = new JButton("New Folder", scaledFolderIcon);
-        folderButton.setFont(Style.BUTTON_FONT);
-        folderButton.setBackground(Style.BUTTON_COLOR);
-        folderButton.setForeground(Color.BLACK);
+        folderButton = new JButton();
         folderButton.setFocusPainted(false);
         folderButton.setBorder(new CompoundBorder(
                 new LineBorder(Style.OUTLINE_COLOR, 2, false),
                 new EmptyBorder(10, 20, 10, 20)
         ));
-        folderButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        folderButton.setBackground(Style.ADDFOLDERBUTTON_COLOR);
         folderButton.setMaximumSize(new Dimension(230, 60));
+        folderButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        folderButton.setLayout(new BoxLayout(folderButton, BoxLayout.X_AXIS));
+
+        folderButton.add(folderIconLabel);
+        folderButton.add(Box.createRigidArea(new Dimension(20, 0)));
+        folderButton.add(folderTextLabel);
+
         add(folderButton);
 
         //When add folder button pressed add folder with cooldown
@@ -70,13 +84,13 @@ public class SidebarPanel extends JPanel {
         //folderList
         folderListPanel = new JPanel();
         folderListPanel.setLayout(new BoxLayout(folderListPanel, BoxLayout.Y_AXIS));
-        folderListPanel.setBackground(Style.BACKGROUND_COLOR);
+        folderListPanel.setBackground(Style.SIDEBARPANEL_COLOR);
 
         //scrollPane
         JScrollPane scrollPane = new JScrollPane(folderListPanel);
         scrollPane.setPreferredSize(new Dimension(300, 300));
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.getViewport().setBackground(Style.BACKGROUND_COLOR);
+        scrollPane.getViewport().setBackground(Style.SIDEBARPANEL_COLOR);
         add(scrollPane);
     }
 

@@ -17,12 +17,12 @@ public class FlashcardPanel extends JPanel {
 
         setLayout(new BorderLayout());
         setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
-        setPreferredSize(new Dimension(750, 500));
+        setPreferredSize(new Dimension(1000, 700));
 
         // Create card layout for flashcard front/back
         cardLayout = new CardLayout();
         cardContainer = new JPanel(cardLayout);
-        cardContainer.setBackground(new Color(255, 243, 207));
+        cardContainer.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         cardContainer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Front (question)
@@ -108,5 +108,4 @@ public class FlashcardPanel extends JPanel {
         answerLabel.setText(answer);
         cardLayout.first(cardContainer);
     }
-
 }

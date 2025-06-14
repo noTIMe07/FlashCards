@@ -13,64 +13,81 @@ import java.util.Objects;
 
 public class MainPanel extends JPanel {
     FlashcardPanel flashcardPanel;
+    AddFlashcardPanel addFlashcardPanel;
+    FlashcardActionPanel flashcardActionPanel;
     private static List<Flashcard> flashcards;
     private static String fileName;
     private static Flashcard currentFlashcard;
-
+    private Image backgroundImage;
+    private JPanel outerPanel;
+    private JPanel flashcardHolderPanel;
+    private CardLayout cardLayout;
 
     public MainPanel() {
         setUp();
         loadFile();
         study();
-        add(flashcardPanel);
+
+        add(flashcardActionPanel, BorderLayout.NORTH);
+        flashcardHolderPanel.add(flashcardPanel, "FlashcardPanel");
+        flashcardHolderPanel.add(addFlashcardPanel, "AddFlashcardPanel");
+        outerPanel.add(flashcardHolderPanel);
+        add(outerPanel, BorderLayout.CENTER);
     }
 
-    public void study(){
-        if(!Objects.equals(fileName, Globals.getCurrentFolderPath())){
-            fileName=Globals.getCurrentFolderPath();
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+    public void study() {
+        if (!Objects.equals(fileName, Globals.getCurrentFolderPath())) {
+            fileName = Globals.getCurrentFolderPath();
             loadFile();
         }
-        for(Flashcard card : flashcards){
-            if(!card.getLearned()) {
-               flashcardPanel.updateFlashcard(card.getFront(), card.getBack());
+        for (Flashcard card : flashcards) {
+            if (!card.getLearned()) {
+                flashcardPanel.updateFlashcard(card.getFront(), card.getBack());
                 currentFlashcard = card;
-                flashcardPanel.setVisible(true);
+                flashcardHolderPanel.setVisible(true);
                 return;
             }
         }
-        flashcardPanel.setVisible(false);
+        flashcardHolderPanel.setVisible(false);
     }
 
     public void setLearned(boolean learned) {
-        if(currentFlashcard!=null){
+        if (currentFlashcard != null) {
             currentFlashcard.setLearned(learned);
-
-            //move the card to back
             flashcards.remove(currentFlashcard);
             flashcards.add(currentFlashcard);
-
             saveFile();
         }
-
         currentFlashcard = null;
         study();
     }
 
-    private void loadFile(){
+    public void addFlashcard(String front, String back){
+        flashcards.add(new Flashcard(front, back, false));
+        saveFile();
+        study();
+    }
+
+    private void loadFile() {
         try (FileReader reader = new FileReader(fileName)) {
             Gson gson = new Gson();
-
             Type flashcardListType = new TypeToken<List<Flashcard>>() {}.getType();
             flashcards = gson.fromJson(reader, flashcardListType);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void saveFile(){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create(); // Pretty JSON output
-
+    public void saveFile() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (FileWriter writer = new FileWriter(fileName)) {
             gson.toJson(flashcards, writer);
         } catch (IOException e) {
@@ -78,16 +95,37 @@ public class MainPanel extends JPanel {
         }
     }
 
-    private void setUp(){
-        setBackground(Style.MAINPANEL_COLOR);
-        setLayout(new GridBagLayout());
+    public void setFlashcardPanelType(String panelType){
+        cardLayout.show(flashcardHolderPanel, panelType);
 
+        if (!"./src/FlashcardStorage/Default.json".equals(Globals.getCurrentFolderPath())
+                && "AddFlashcardPanel".equals(panelType)) {
+            flashcardHolderPanel.setVisible(true);
+        }
+    }
+
+    private void setUp() {
+        //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
         fileName = Globals.getCurrentFolderPath();
         flashcardPanel = new FlashcardPanel("Start", "Back", this);
+        addFlashcardPanel = new AddFlashcardPanel(this);
+        backgroundImage = new ImageIcon(getClass().getResource("/Images/background.png")).getImage();
+
+        flashcardActionPanel = new FlashcardActionPanel(this);
+
+        outerPanel = new JPanel();
+        outerPanel.setOpaque(false);
+        outerPanel.setLayout(new GridBagLayout());
+        outerPanel.setBorder(BorderFactory.createMatteBorder(2, 2, 0, 0, Style.OUTLINE_COLOR));
+
+        cardLayout = new CardLayout();
+        flashcardHolderPanel = new JPanel(cardLayout);
+        flashcardHolderPanel.setOpaque(false);
 
         Globals.addPropertyChangeListener(evt -> {
             study();
+            setFlashcardPanelType("FlashcardPanel");
         });
     }
-
 }

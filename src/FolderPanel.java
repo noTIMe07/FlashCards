@@ -48,7 +48,7 @@ public class FolderPanel extends JPanel {
             inner.setBackground(Style.FOLDER_HIGHLIGHTCOLOR);
         }
         else {
-            inner.setBackground(Style.FOLDER_COLOR);
+            inner.setBackground(Style.FOLDERPANEL_COLOR);
         }
     }
 
@@ -70,7 +70,7 @@ public class FolderPanel extends JPanel {
     public void setLayout(){
         setLayout(new BorderLayout());
         setMaximumSize(new Dimension(200, 60));
-        setBackground(Style.BACKGROUND_COLOR);
+        setBackground(Style.SIDEBARPANEL_COLOR);
         //Create invisible gap
         setBorder(new EmptyBorder(2, 0, 2, 0));
 
@@ -134,12 +134,9 @@ public class FolderPanel extends JPanel {
 
         //Recycle Bin Icon
         ImageIcon recycleIcon = new ImageIcon(getClass().getResource("/Icons/recycle_empty.png"));
-        Image image = recycleIcon.getImage().getScaledInstance(32, 32, Image.SCALE_FAST);
-        ImageIcon scaledRecycleIcon = new ImageIcon(image);
 
         //recycleButton size
-        recycleButton = new JButton(scaledRecycleIcon);
-
+        recycleButton = new JButton(recycleIcon);
         recycleButton.setPreferredSize(new Dimension(32, 32));
         recycleButton.setMinimumSize(new Dimension(32, 32));
         recycleButton.setMaximumSize(new Dimension(32, 32));
@@ -246,13 +243,5 @@ public class FolderPanel extends JPanel {
             parent.revalidate();
             parent.repaint();
         }
-    }
-
-    public void addFlashcard(String question, String answer, Boolean leaned){
-        flashcards.add(new Flashcard(question, answer, leaned));
-    }
-
-    public void removeFlashcard(String question, String answer, Boolean leaned){
-        flashcards.remove(new Flashcard(question, answer, leaned));
     }
 }
