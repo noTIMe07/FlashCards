@@ -13,12 +13,7 @@ public class Main {
     }
 }
 
-//delete folder function
 
-//add edit remove cards
+//edit cards
 
-//dont add empty cards
-//make selected folder more obvious even for two folders
-//Flip card when clicked anywhere on the card
-
-//Hide card when deck erased
+//shortcuts

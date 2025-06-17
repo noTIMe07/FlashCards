@@ -13,10 +13,7 @@ public class FlashcardActionPanel extends JPanel {
         mainPanel = mainPanel_;
 
         setLayout();
-
-        addFlashcardButton.addActionListener(e -> {
-            mainPanel.setFlashcardPanelType("AddFlashcardPanel");
-        });
+        setupButtons();
     }
 
     public void setLayout(){
@@ -44,5 +41,36 @@ public class FlashcardActionPanel extends JPanel {
         buttonHolderPanel.add(editFlashcardButton);
 
         add(buttonHolderPanel);
+    }
+
+    private void setupButtons(){
+        addFlashcardButton.addActionListener(e -> {
+            if(mainPanel.getFlashcardPanelType().equals("FlashcardPanel")){
+                mainPanel.setFlashcardPanelType("AddFlashcardPanel");
+            }
+        });
+
+        removeFlashcardButton.addActionListener(e -> {
+            if(mainPanel.getFlashcardPanelType().equals("FlashcardPanel") && !mainPanel.isDeckLearned()){
+                mainPanel.setFlashcardPanelType("RemoveFlashcardPanel");
+            }
+        });
+    }
+
+    // 1 for add button activated, 2 for delete, 3 for edit, 0 for all
+    public void styleButton(int button){
+        if(button==0){
+            addFlashcardButton.setActionButtonActive(false);
+            removeFlashcardButton.setActionButtonActive(false);
+            editFlashcardButton.setActionButtonActive(false);
+        }
+        else{
+            if (button == 1) addFlashcardButton.setActionButtonActive(true);
+            else addFlashcardButton.setActionButtonActive(false);
+            if (button == 2) removeFlashcardButton.setActionButtonActive(true);
+            else removeFlashcardButton.setActionButtonActive(false);
+            if (button == 3) editFlashcardButton.setActionButtonActive(true);
+            else editFlashcardButton.setActionButtonActive(false);
+        }
     }
 }

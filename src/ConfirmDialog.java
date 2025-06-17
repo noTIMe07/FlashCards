@@ -36,7 +36,7 @@ public class ConfirmDialog {
         closeButton.setForeground(Color.BLACK);
         closeButton.setFont(Style.BUTTON_FONT);
         closeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        closeButton.setPreferredSize(new Dimension(45, 30));
+        closeButton.setPreferredSize(new Dimension(50, 30));
         closeButton.addActionListener(e -> dialog.dispose());
 
         //Add title bar components

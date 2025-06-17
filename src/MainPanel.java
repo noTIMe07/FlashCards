@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,9 +13,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainPanel extends JPanel {
-    FlashcardPanel flashcardPanel;
-    AddFlashcardPanel addFlashcardPanel;
-    FlashcardActionPanel flashcardActionPanel;
+    private FlashcardPanel flashcardPanel;
+    private AddFlashcardPanel addFlashcardPanel;
+    private RemoveFlashcardPanel removeFlashcardPanel;
+    private RemoveConfirmationFlashcardPanel removeConfirmationFlashcardPanel;
+    private FlashcardActionPanel flashcardActionPanel;
     private static List<Flashcard> flashcards;
     private static String fileName;
     private static Flashcard currentFlashcard;
@@ -22,8 +25,10 @@ public class MainPanel extends JPanel {
     private JPanel outerPanel;
     private JPanel flashcardHolderPanel;
     private CardLayout cardLayout;
+    private String currentFlashcardType;
 
     public MainPanel() {
+        currentFlashcardType = "";
         setUp();
         loadFile();
         study();
@@ -31,6 +36,8 @@ public class MainPanel extends JPanel {
         add(flashcardActionPanel, BorderLayout.NORTH);
         flashcardHolderPanel.add(flashcardPanel, "FlashcardPanel");
         flashcardHolderPanel.add(addFlashcardPanel, "AddFlashcardPanel");
+        flashcardHolderPanel.add(removeFlashcardPanel, "RemoveFlashcardPanel");
+        flashcardHolderPanel.add(removeConfirmationFlashcardPanel, "RemoveConfirmationFlashcardPanel");
         outerPanel.add(flashcardHolderPanel);
         add(outerPanel, BorderLayout.CENTER);
     }
@@ -59,6 +66,19 @@ public class MainPanel extends JPanel {
         flashcardHolderPanel.setVisible(false);
     }
 
+    public boolean isDeckLearned(){
+        for (Flashcard card : flashcards) {
+            if (!card.getLearned()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void setFlashcardVisibility(boolean visibility){
+        flashcardHolderPanel.setVisible(visibility);
+    }
+
     public void setLearned(boolean learned) {
         if (currentFlashcard != null) {
             currentFlashcard.setLearned(learned);
@@ -72,6 +92,12 @@ public class MainPanel extends JPanel {
 
     public void addFlashcard(String front, String back){
         flashcards.add(new Flashcard(front, back, false));
+        saveFile();
+        study();
+    }
+
+    public void removeFlashcard(){
+        flashcards.remove(currentFlashcard);
         saveFile();
         study();
     }
@@ -97,11 +123,21 @@ public class MainPanel extends JPanel {
 
     public void setFlashcardPanelType(String panelType){
         cardLayout.show(flashcardHolderPanel, panelType);
+        currentFlashcardType = panelType;
 
         if (!"./src/FlashcardStorage/Default.json".equals(Globals.getCurrentFolderPath())
                 && "AddFlashcardPanel".equals(panelType)) {
             flashcardHolderPanel.setVisible(true);
         }
+
+        //Grey out buttons that are not pressable
+        if(currentFlashcardType.equals("FlashcardPanel")) flashcardActionPanel.styleButton(0);
+        else if(currentFlashcardType.equals("AddFlashcardPanel")) flashcardActionPanel.styleButton(1);
+        else if(currentFlashcardType.equals("RemoveFlashcardPanel")) flashcardActionPanel.styleButton(2);
+    }
+
+    public String getFlashcardPanelType(){
+        return currentFlashcardType;
     }
 
     private void setUp() {
@@ -110,6 +146,8 @@ public class MainPanel extends JPanel {
         fileName = Globals.getCurrentFolderPath();
         flashcardPanel = new FlashcardPanel("Start", "Back", this);
         addFlashcardPanel = new AddFlashcardPanel(this);
+        removeFlashcardPanel = new RemoveFlashcardPanel(this);
+        removeConfirmationFlashcardPanel = new RemoveConfirmationFlashcardPanel();
         backgroundImage = new ImageIcon(getClass().getResource("/Images/background.png")).getImage();
 
         flashcardActionPanel = new FlashcardActionPanel(this);

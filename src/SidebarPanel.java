@@ -1,6 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 
@@ -8,13 +11,14 @@ public class SidebarPanel extends JPanel {
     private JPanel folderListPanel;
     private boolean folderCreationCooldown;
     private JButton folderButton;
+    private MainPanel mainPanel;
 
-    public SidebarPanel() {
-
+    public SidebarPanel(MainPanel mainPanel_) {
+        mainPanel = mainPanel_;
         folderCreationCooldown = false;
 
         setLayout();
-
+        setupButtons();
         initialFolderSetUp();
     }
 
@@ -23,7 +27,6 @@ public class SidebarPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(250, 0));
         setBackground(Style.SIDEBARPANEL_COLOR);
-        setBorder(new MatteBorder(0, 0, 0, 0, Style.OUTLINE_COLOR));
 
         //Logo on the top
         int logoSize = 150;
@@ -51,32 +54,24 @@ public class SidebarPanel extends JPanel {
         //folderButton
         folderButton = new JButton();
         folderButton.setFocusPainted(false);
-        folderButton.setBorder(new CompoundBorder(
-                new LineBorder(Style.OUTLINE_COLOR, 2, false),
-                new EmptyBorder(10, 20, 10, 20)
-        ));
+        folderButton.setBorder(new LineBorder(Style.OUTLINE_COLOR, 2, false));
         folderButton.setBackground(Style.ADDFOLDERBUTTON_COLOR);
         folderButton.setMaximumSize(new Dimension(230, 60));
         folderButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        folderButton.setLayout(new BoxLayout(folderButton, BoxLayout.X_AXIS));
+        folderButton.setLayout(new BorderLayout());
 
-        folderButton.add(folderIconLabel);
-        folderButton.add(Box.createRigidArea(new Dimension(20, 0)));
-        folderButton.add(folderTextLabel);
+        // Content holder panel to show and additional empty border
+        JPanel contentHolderPanel = new JPanel();
+        contentHolderPanel.setOpaque(false);
+        contentHolderPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+        contentHolderPanel.setLayout(new BoxLayout(contentHolderPanel, BoxLayout.X_AXIS));
 
+        contentHolderPanel.add(folderIconLabel);
+        contentHolderPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+        contentHolderPanel.add(folderTextLabel);
+
+        folderButton.add(contentHolderPanel);
         add(folderButton);
-
-        //When add folder button pressed add folder with cooldown
-        folderButton.addActionListener(e -> {
-            if (folderCreationCooldown) return;
-            folderCreationCooldown = true;
-
-            createFolder("");
-
-            new javax.swing.Timer(500, evt -> {
-                folderCreationCooldown = false;
-            }).start();
-        });
 
         //space in between
         add(new Box.Filler(new Dimension(0, 10),new Dimension(0, 25), new Dimension(0, 50)));
@@ -96,7 +91,7 @@ public class SidebarPanel extends JPanel {
 
     public void createFolder(String name){
         //add Folder to List
-        folderListPanel.add(new FolderPanel(name));
+        folderListPanel.add(new FolderPanel(name, mainPanel));
         folderListPanel.revalidate();
         folderListPanel.repaint();
     }
@@ -122,5 +117,43 @@ public class SidebarPanel extends JPanel {
                 }
             }
         }
+    }
+
+    public void setupButtons(){
+        //When add folder button pressed add folder with cooldown
+        folderButton.addActionListener(e -> {
+            if (folderCreationCooldown) return;
+            folderCreationCooldown = true;
+
+            createFolder("");
+
+            new javax.swing.Timer(500, evt -> {
+                folderCreationCooldown = false;
+            }).start();
+        });
+
+        // Override paint to skip blue fill when pressed
+        folderButton.setUI(new BasicButtonUI() {
+            @Override
+            protected void paintButtonPressed(Graphics g, AbstractButton b) {
+                // Do nothing
+            }
+        });
+
+        //Draw white border when pressed
+        folderButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                folderButton.setBorder(new CompoundBorder(
+                        new LineBorder(Style.OUTLINE_COLOR, 2, false),
+                        new LineBorder(Color.white, 2, false)
+                ));
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                folderButton.setBorder(new LineBorder(Style.OUTLINE_COLOR, 2, false));
+            }
+        });
     }
 }

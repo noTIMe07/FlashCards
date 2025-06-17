@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class FlashcardPanel extends JPanel {
@@ -6,6 +7,7 @@ public class FlashcardPanel extends JPanel {
     private JPanel cardContainer;
     private static JLabel questionLabel;
     private static JLabel answerLabel;
+    private JButton centerButton;
     private JButton flipButton;
     private JButton reverseButton;
     private JButton wrongButton;
@@ -27,10 +29,20 @@ public class FlashcardPanel extends JPanel {
 
         // Front (question)
         questionLabel = createCardLabel(question);
+
+        // Center button so user can click anywhere on card to flip
+        centerButton = new JButton();
+        centerButton.setOpaque(false);
+        centerButton.setFocusPainted(false);
+        centerButton.setContentAreaFilled(false);
+        centerButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+        centerButton.setLayout(new BorderLayout());
+        centerButton.add(questionLabel);
+
         JPanel frontCard = new JPanel(new BorderLayout());
         frontCard.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         frontCard.setBorder(BorderFactory.createLineBorder(Style.OUTLINE_COLOR, 4, true));
-        frontCard.add(questionLabel, BorderLayout.CENTER);
+        frontCard.add(centerButton, BorderLayout.CENTER);
 
         // Front Flip Button
         flipButton = new JButton("Flip");
@@ -89,6 +101,7 @@ public class FlashcardPanel extends JPanel {
         add(cardContainer, BorderLayout.CENTER);
 
         //Button functionality
+        centerButton.addActionListener(e -> cardLayout.next(cardContainer));
         flipButton.addActionListener(e -> cardLayout.next(cardContainer));
         reverseButton.addActionListener(e -> cardLayout.next(cardContainer));
 
@@ -98,7 +111,7 @@ public class FlashcardPanel extends JPanel {
 
     private JLabel createCardLabel(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font("SansSerif", Font.BOLD, 24));
+        label.setFont(new Font("SansSerif", Font.PLAIN, 24));
         label.setForeground(new Color(60, 40, 40));
         return label;
     }

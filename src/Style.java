@@ -1,3 +1,4 @@
+import javax.print.DocFlavor;
 import java.awt.*;
 
 public class Style {
@@ -12,6 +13,7 @@ public class Style {
     public static final Color CONFIRM_MAIN = new Color(226, 215, 179);
     public static final Color CONFIRM_TOP = new Color(198, 187, 153);
     public static final Color ACTIONBUTTON_COLOR = new Color(175, 163, 142);
+    public static final Color ACTIONBUTTON_OFF_COLOR = Color.lightGray;
 
     public static final Font LOGO_FONT = new Font("Comic Sans MS", Font.BOLD, 26);
     public static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.PLAIN, 16);

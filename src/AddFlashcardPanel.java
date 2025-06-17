@@ -38,6 +38,8 @@ public class AddFlashcardPanel extends JPanel {
         // When submit button is pressed, then save input and reset Text Panes
         submitButton.addActionListener(e -> {
             try {
+                // If front or back empty, then return
+                if(frontTextPane.getText().isEmpty()||backTextPane.getText().isEmpty()) return;
                 // Get styled document from frontTextPane
                 StyledDocument frontDoc = frontTextPane.getStyledDocument();
                 String front = styledDocumentToHTML(frontDoc);
@@ -63,7 +65,7 @@ public class AddFlashcardPanel extends JPanel {
         setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         setPreferredSize(new Dimension(750, 500));
 
-        // Create card layout for flashcard front/back
+        // Create card container to hold title bar, submit button and editor panel
         cardContainer = new JPanel();
         cardContainer.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         cardContainer.setLayout(new BorderLayout());

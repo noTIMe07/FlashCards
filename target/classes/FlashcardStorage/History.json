@@ -1,32 +1,7 @@
 [
   {
-    "front": "Who was the first President of the United States?",
-    "back": "George Washington",
-    "learned": false
-  },
-  {
-    "front": "In which year did World War II end?",
-    "back": "1945",
-    "learned": true
-  },
-  {
-    "front": "What wall fell in 1989, symbolizing the end of the Cold War?",
-    "back": "The Berlin Wall",
-    "learned": false
-  },
-  {
-    "front": "What was the name of the ship that brought the Pilgrims to America in 1620?",
-    "back": "The Mayflower",
-    "learned": false
-  },
-  {
-    "front": "Which civilization built Machu Picchu?",
-    "back": "The Inca civilization",
-    "learned": false
-  },
-  {
-    "front": "Who was the leader of Nazi Germany during World War II?",
-    "back": "Adolf Hitler",
+    "front": "What year did the United States declare independence?",
+    "back": "1776",
     "learned": false
   },
   {
@@ -45,8 +20,23 @@
     "learned": false
   },
   {
-    "front": "What year did the United States declare independence?",
-    "back": "1776",
-    "learned": true
+    "front": "What wall fell in 1989, symbolizing the end of the Cold War?",
+    "back": "The Berlin Wall",
+    "learned": false
+  },
+  {
+    "front": "What was the name of the ship that brought the Pilgrims to America in 1620?",
+    "back": "The Mayflower",
+    "learned": false
+  },
+  {
+    "front": "Which civilization built Machu Picchu?",
+    "back": "The Inca civilization",
+    "learned": false
+  },
+  {
+    "front": "Who was the first President of the United States?",
+    "back": "George Washington",
+    "learned": false
   }
 ]

@@ -14,7 +14,7 @@ import java.util.Objects;
 import com.google.gson.Gson;
 
 public class FolderPanel extends JPanel {
-
+    private MainPanel mainPanel;
     private String name;
     private JButton folderButton;
     private List<Flashcard> flashcards;
@@ -24,7 +24,8 @@ public class FolderPanel extends JPanel {
     private JPanel inner;
     Gson gson;
 
-    public FolderPanel(String name_) {
+    public FolderPanel(String name_, MainPanel mainPanel_) {
+        mainPanel = mainPanel_;
         name = name_;
 
         setUp();
@@ -50,6 +51,20 @@ public class FolderPanel extends JPanel {
         else {
             inner.setBackground(Style.FOLDERPANEL_COLOR);
         }
+    }
+
+    //Updates folder border if folder is clicked
+    public void setFolderBorder(){
+        if(Objects.equals(filename, Globals.getCurrentFolderPath())){
+            inner.setBorder(new CompoundBorder(
+                    new LineBorder(Style.OUTLINE_COLOR, 2, false),
+                    new LineBorder(Color.white, 2, false)
+            ));
+        }
+        else {
+            inner.setBorder(new LineBorder(Style.OUTLINE_COLOR, 2, false));
+        }
+
     }
 
     //Creates file with filename if file doesn't exist yet
@@ -82,12 +97,10 @@ public class FolderPanel extends JPanel {
         setFolderColor();
         Globals.addPropertyChangeListener(evt -> {
             setFolderColor();
+            setFolderBorder();
         });
         //Folder Border
-        inner.setBorder(new CompoundBorder(
-                new LineBorder(Style.OUTLINE_COLOR, 2, false),
-                new EmptyBorder(0, 0, 0, 0)
-        ));
+        inner.setBorder(new LineBorder(Style.OUTLINE_COLOR, 2, false));
         inner.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //Folder name on Folder Button
@@ -237,11 +250,14 @@ public class FolderPanel extends JPanel {
         //If parent exist, remove itself from parent
         Container parent = this.getParent();
         if (parent != null) {
-            parent.remove(this); // remove self from JPanel
+            parent.remove(this);
 
             // Refresh UI
             parent.revalidate();
             parent.repaint();
         }
+
+        //Update mainPanel
+        mainPanel.setFlashcardVisibility(false);
     }
 }
