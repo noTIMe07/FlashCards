@@ -1,11 +1,10 @@
 import javax.swing.*;
 import javax.swing.text.StyledDocument;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.io.StringWriter;
 
-public class AddFlashcardPanel extends JPanel {
+public class EditFlashcardPanel extends JPanel {
     private MainPanel mainPanel;
     private JPanel cardContainer;
     private JPanel titleBar;
@@ -15,18 +14,17 @@ public class AddFlashcardPanel extends JPanel {
     private JTextPane backTextPane;
     private JButton submitButton;
 
-    public AddFlashcardPanel(MainPanel mainPanel_) {
+    public EditFlashcardPanel(MainPanel mainPanel_) {
         mainPanel = mainPanel_;
 
         setLayout();
         setupButtons();
     }
 
-    private String styledDocumentToHTML(JTextPane pane) throws Exception {
-        HTMLDocument htmlDoc = (HTMLDocument) pane.getDocument();
-        HTMLEditorKit htmlKit = (HTMLEditorKit) pane.getEditorKit();
+    private String styledDocumentToHTML(StyledDocument doc) throws Exception {
+        HTMLEditorKit kit = new HTMLEditorKit();
         StringWriter writer = new StringWriter();
-        htmlKit.write(writer, htmlDoc, 0, htmlDoc.getLength());
+        kit.write(writer, doc, 0, doc.getLength());
         return writer.toString();
     }
 
@@ -42,18 +40,20 @@ public class AddFlashcardPanel extends JPanel {
             try {
                 // If front or back empty, then return
                 if(frontTextPane.getText().isEmpty()||backTextPane.getText().isEmpty()) return;
-                // Get front from frontTextPane
-                String front = styledDocumentToHTML(frontTextPane);
+                // Get styled document from frontTextPane
+                StyledDocument frontDoc = frontTextPane.getStyledDocument();
+                String front = styledDocumentToHTML(frontDoc);
 
-                // Get back from backTextPane
-                String back = styledDocumentToHTML(backTextPane);
+                // Get styled document for backTextPane
+                StyledDocument backDoc = backTextPane.getStyledDocument();
+                String back = styledDocumentToHTML(backDoc);
 
                 // Save flashcard
-                mainPanel.addFlashcard(front, back);
+                mainPanel.editFlashcard(front, back);
 
-                // Reset text panes
-                frontTextPane.setText("");
-                backTextPane.setText("");
+                // Close Panel
+                mainPanel.study();
+                mainPanel.setFlashcardPanelType("FlashcardPanel");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -112,12 +112,9 @@ public class AddFlashcardPanel extends JPanel {
         // Scrollable Question TextPane
         frontTextPane = new JTextPane();
         frontTextPane.setContentType("text/html");
+        frontTextPane.setFont(new Font("Arial", Font.PLAIN, 24));
         frontTextPane.setForeground(Color.black);
         frontTextPane.setBackground(Color.lightGray);
-        HTMLEditorKit htmlKit = new HTMLEditorKit();
-        frontTextPane.setEditorKit(htmlKit);
-        frontTextPane.setDocument(htmlKit.createDefaultDocument());
-        frontTextPane.setText("<html><body style='font-family:Arial; font-size:24pt; color:black;</body></html>");
 
         JScrollPane frontScroll = new JScrollPane(frontTextPane);
         frontScroll.setPreferredSize(new Dimension(300, 100));
@@ -143,13 +140,10 @@ public class AddFlashcardPanel extends JPanel {
 
         // Scrollable Answer TextPane
         backTextPane = new JTextPane();
-        backTextPane.setContentType("text/html");
+        backTextPane.setFont(new Font("Arial", Font.PLAIN, 20));
         backTextPane.setForeground(Color.BLACK);
         backTextPane.setBackground(Color.LIGHT_GRAY);
-        backTextPane.setEditorKit(htmlKit);
-        backTextPane.setDocument(htmlKit.createDefaultDocument());
-        backTextPane.setText("<html><body style='font-family:Arial; font-size:24pt; color:black;</body></html>");
-
+        backTextPane.setContentType("text/html");
 
         JScrollPane backScroll = new JScrollPane(backTextPane);
         backScroll.setPreferredSize(new Dimension(300, 100));
@@ -176,5 +170,22 @@ public class AddFlashcardPanel extends JPanel {
         submitButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         cardContainer.add(submitButton, BorderLayout.SOUTH);
+    }
+
+    // Update the content of the text Panes in order to set the editor up
+    public void updateTextPanes(){
+        frontTextPane.setText(applyDefaultHtmlStyle(mainPanel.getCurrentFlashcard().getFront()));
+        backTextPane.setText(applyDefaultHtmlStyle(mainPanel.getCurrentFlashcard().getBack()));
+    }
+
+    public static String applyDefaultHtmlStyle(String userHtmlContent) {
+        // Remove surrounding <html> and <body> if the input includes them
+        userHtmlContent = userHtmlContent.replaceAll("(?i)</?html>", "")
+                .replaceAll("(?i)</?body>", "");
+
+        // Wrap in a parent with default styles
+        return "<html><body style='font-family:Arial; font-size:24pt; color:black;'>"
+                + userHtmlContent
+                + "</body></html>";
     }
 }

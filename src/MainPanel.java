@@ -17,6 +17,7 @@ public class MainPanel extends JPanel {
     private AddFlashcardPanel addFlashcardPanel;
     private RemoveFlashcardPanel removeFlashcardPanel;
     private RemoveConfirmationFlashcardPanel removeConfirmationFlashcardPanel;
+    private EditFlashcardPanel editFlashcardPanel;
     private FlashcardActionPanel flashcardActionPanel;
     private static List<Flashcard> flashcards;
     private static String fileName;
@@ -38,6 +39,7 @@ public class MainPanel extends JPanel {
         flashcardHolderPanel.add(addFlashcardPanel, "AddFlashcardPanel");
         flashcardHolderPanel.add(removeFlashcardPanel, "RemoveFlashcardPanel");
         flashcardHolderPanel.add(removeConfirmationFlashcardPanel, "RemoveConfirmationFlashcardPanel");
+        flashcardHolderPanel.add(editFlashcardPanel, "EditFlashcardPanel");
         outerPanel.add(flashcardHolderPanel);
         add(outerPanel, BorderLayout.CENTER);
     }
@@ -102,6 +104,15 @@ public class MainPanel extends JPanel {
         study();
     }
 
+    public void editFlashcard(String front, String back){
+        if(currentFlashcard==null) return;
+
+        currentFlashcard.setFront(front);
+        currentFlashcard.setBack(back);
+
+        saveFile();
+    }
+
     private void loadFile() {
         try (FileReader reader = new FileReader(fileName)) {
             Gson gson = new Gson();
@@ -130,6 +141,8 @@ public class MainPanel extends JPanel {
             flashcardHolderPanel.setVisible(true);
         }
 
+        if(currentFlashcardType.equals("EditFlashcardPanel")) editFlashcardPanel.updateTextPanes();
+
         //Grey out buttons that are not pressable
         if(currentFlashcardType.equals("FlashcardPanel")) flashcardActionPanel.styleButton(0);
         else if(currentFlashcardType.equals("AddFlashcardPanel")) flashcardActionPanel.styleButton(1);
@@ -140,6 +153,10 @@ public class MainPanel extends JPanel {
         return currentFlashcardType;
     }
 
+    public Flashcard getCurrentFlashcard(){
+        return currentFlashcard;
+    }
+
     private void setUp() {
         //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
@@ -148,6 +165,7 @@ public class MainPanel extends JPanel {
         addFlashcardPanel = new AddFlashcardPanel(this);
         removeFlashcardPanel = new RemoveFlashcardPanel(this);
         removeConfirmationFlashcardPanel = new RemoveConfirmationFlashcardPanel();
+        editFlashcardPanel = new EditFlashcardPanel(this);
         backgroundImage = new ImageIcon(getClass().getResource("/Images/background.png")).getImage();
 
         flashcardActionPanel = new FlashcardActionPanel(this);

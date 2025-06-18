@@ -1,0 +1,7 @@
+[
+  {
+    "front": "\u003chtml\u003e\r\n  \u003chead\u003e\r\n    \u003cstyle\u003e\r\n      \u003c!--\r\n        p.default {\r\n          family:Arial;\r\n          size:6;\r\n          bold:normal;\r\n          italic:;\r\n          foreground:#000000;\r\n        }\r\n      --\u003e\r\n    \u003c/style\u003e\r\n  \u003c/head\u003e\r\n  \u003cbody\u003e\r\n    \u003cp class\u003ddefault\u003e\r\n      \u003cspan style\u003d\"color: #000000; font-size: 20pt; font-family: Arial\"\u003e\r\n        TEst\r\n      \u003c/span\u003e\r\n    \u003c/p\u003e\r\n  \u003c/body\u003e\r\n\u003c/html\u003e\r\n",
+    "back": "\u003chtml\u003e\r\n  \u003chead\u003e\r\n    \u003cstyle\u003e\r\n      \u003c!--\r\n        p.default {\r\n          family:Arial;\r\n          size:6;\r\n          bold:normal;\r\n          italic:;\r\n          foreground:#000000;\r\n        }\r\n      --\u003e\r\n    \u003c/style\u003e\r\n  \u003c/head\u003e\r\n  \u003cbody\u003e\r\n    \u003cp class\u003ddefault\u003e\r\n      \u003cspan style\u003d\"color: #000000; font-size: 20pt; font-family: Arial\"\u003e\r\n        teast\r\n      \u003c/span\u003e\r\n    \u003c/p\u003e\r\n  \u003c/body\u003e\r\n\u003c/html\u003e\r\n",
+    "learned": true
+  }
+]

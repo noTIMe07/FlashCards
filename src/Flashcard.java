@@ -13,6 +13,8 @@ public class Flashcard {
     public String getBack(){return back;}
     public Boolean getLearned(){return learned;}
 
+    public void setFront(String front_){front = front_;}
+    public void setBack(String back_){back = back_;}
     public void setLearned(Boolean learned_){learned=learned_;}
 
 

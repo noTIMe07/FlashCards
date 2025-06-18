@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class FlashcardActionPanel extends JPanel {
 
@@ -55,6 +56,14 @@ public class FlashcardActionPanel extends JPanel {
                 mainPanel.setFlashcardPanelType("RemoveFlashcardPanel");
             }
         });
+
+        editFlashcardButton.addActionListener(e -> {
+            if(mainPanel.getFlashcardPanelType().equals("FlashcardPanel") && !mainPanel.isDeckLearned()){
+                mainPanel.setFlashcardPanelType("EditFlashcardPanel");
+            }
+        });
+
+
     }
 
     // 1 for add button activated, 2 for delete, 3 for edit, 0 for all
