@@ -12,31 +12,31 @@
   {
     "front": "Who wrote the Communist Manifesto?",
     "back": "Karl Marx and Friedrich Engels",
-    "learned": false
+    "learned": true
   },
   {
     "front": "What empire was ruled by Genghis Khan?",
     "back": "The Mongol Empire",
-    "learned": false
+    "learned": true
   },
   {
     "front": "What wall fell in 1989, symbolizing the end of the Cold War?",
     "back": "The Berlin Wall",
-    "learned": false
+    "learned": true
   },
   {
     "front": "What was the name of the ship that brought the Pilgrims to America in 1620?",
     "back": "The Mayflower",
-    "learned": false
+    "learned": true
   },
   {
     "front": "Which civilization built Machu Picchu?",
     "back": "The Inca civilization",
-    "learned": false
+    "learned": true
   },
   {
     "front": "Who was the first President of the United States?",
     "back": "George Washington",
-    "learned": false
+    "learned": true
   }
 ]

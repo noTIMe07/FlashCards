@@ -2,12 +2,12 @@
   {
     "front": "What year did the United States declare independence?",
     "back": "1776",
-    "learned": true
+    "learned": false
   },
   {
     "front": "What historical event began on July 14, 1789, with the storming of the Bastille?",
     "back": "The French Revolution",
-    "learned": true
+    "learned": false
   },
   {
     "front": "Who wrote the Communist Manifesto?",
