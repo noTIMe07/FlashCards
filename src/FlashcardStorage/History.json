@@ -2,41 +2,49 @@
   {
     "front": "What year did the United States declare independence?",
     "back": "1776",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   },
   {
     "front": "What historical event began on July 14, 1789, with the storming of the Bastille?",
     "back": "The French Revolution",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   },
   {
     "front": "Who wrote the Communist Manifesto?",
     "back": "Karl Marx and Friedrich Engels",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   },
   {
     "front": "What empire was ruled by Genghis Khan?",
     "back": "The Mongol Empire",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   },
   {
     "front": "What wall fell in 1989, symbolizing the end of the Cold War?",
     "back": "The Berlin Wall",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   },
   {
     "front": "What was the name of the ship that brought the Pilgrims to America in 1620?",
     "back": "The Mayflower",
-    "learned": true
-  },
-  {
-    "front": "Which civilization built Machu Picchu?",
-    "back": "The Inca civilization",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   },
   {
     "front": "Who was the first President of the United States?",
     "back": "George Washington",
-    "learned": true
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
+  },
+  {
+    "front": "Which civilization built Machu Picchu?",
+    "back": "The Inca civilization",
+    "learnedCounter": 1,
+    "dateStudied": "2025-06-27"
   }
 ]

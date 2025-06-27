@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,7 +59,9 @@ public class MainPanel extends JPanel {
             loadFile();
         }
         for (Flashcard card : flashcards) {
-            if (!card.getLearned()) {
+            int counter = card.getLearnedCounter();
+            LocalDate dueDate = (card.getDateStudied()).plusDays(counter * counter);
+            if (!dueDate.isAfter(LocalDate.now())) {
                 flashcardPanel.updateFlashcard(card.getFront(), card.getBack());
                 currentFlashcard = card;
                 flashcardHolderPanel.setVisible(true);
@@ -70,7 +73,7 @@ public class MainPanel extends JPanel {
 
     public boolean isDeckLearned(){
         for (Flashcard card : flashcards) {
-            if (!card.getLearned()) {
+            if (!card.isLearned()) {
                 return false;
             }
         }
@@ -83,7 +86,10 @@ public class MainPanel extends JPanel {
 
     public void setLearned(boolean learned) {
         if (currentFlashcard != null) {
-            currentFlashcard.setLearned(learned);
+            // If learned = true then add 1 to learned Counter else reset
+            if(learned) currentFlashcard.setLearnedCounter(currentFlashcard.getLearnedCounter() + 1);
+            else currentFlashcard.setLearnedCounter(0);
+            currentFlashcard.setDateStudied(LocalDate.now().toString());
             flashcards.remove(currentFlashcard);
             flashcards.add(currentFlashcard);
             saveFile();
@@ -93,7 +99,7 @@ public class MainPanel extends JPanel {
     }
 
     public void addFlashcard(String front, String back){
-        flashcards.add(new Flashcard(front, back, false));
+        flashcards.add(new Flashcard(front, back));
         saveFile();
         study();
     }

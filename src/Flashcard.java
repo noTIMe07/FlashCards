@@ -1,25 +1,47 @@
+import java.time.LocalDate;
+
 public class Flashcard {
     private String front;
     private String back;
-    private boolean learned;
+    private int learnedCounter;
+    private String dateStudied;
 
-    public Flashcard(String front, String back, boolean learned) {
+    public Flashcard(String front, String back) {
         this.front = front;
         this.back = back;
-        this.learned = learned;
+
+        learnedCounter = 0;
+        // yyyy-mm-dd
+        dateStudied = LocalDate.now().toString();
+    }
+
+    public Flashcard(String front, String back, Integer learnedCounter, String dateStudied) {
+        this.front = (front != null) ? front : "";
+        this.back = (back != null) ? back : "";
+        this.learnedCounter = (learnedCounter != null) ? learnedCounter : 0;
+        this.dateStudied = (dateStudied != null) ? dateStudied : LocalDate.now().toString();
     }
 
     public String getFront(){return front;}
     public String getBack(){return back;}
-    public Boolean getLearned(){return learned;}
+    public int getLearnedCounter(){return learnedCounter;}
+    public LocalDate getDateStudied(){
+        return (dateStudied != null) ? LocalDate.parse(dateStudied) : LocalDate.now();
+    }
+    public boolean isLearned(){
+        if(learnedCounter == 0) return false;
+        else return true;
+    }
 
     public void setFront(String front_){front = front_;}
     public void setBack(String back_){back = back_;}
-    public void setLearned(Boolean learned_){learned=learned_;}
+    public void setLearnedCounter(int learnedCounter){this.learnedCounter = learnedCounter;}
+    public void setDateStudied(String dateStudied){this.dateStudied = dateStudied;}
 
 
     @Override
     public String toString() {
-        return "Question: " + front + " | Answer: " + back + " | Learned: " + learned;
+        return "Question: " + front + " | Answer: " + back + " | LearnedCounter: " + learnedCounter +
+                " | DateStudied: " + dateStudied;
     }
 }
