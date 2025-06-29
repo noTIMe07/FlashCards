@@ -14,8 +14,12 @@ public class FlashcardPanel extends JPanel {
     private JButton rightButton;
     private MainPanel mainPanel;
 
+    private boolean isFront;
+
     public FlashcardPanel(String question, String answer, MainPanel mainPanel_) {
         mainPanel = mainPanel_;
+
+        isFront = true;
 
         setLayout(new BorderLayout());
         setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
@@ -101,9 +105,18 @@ public class FlashcardPanel extends JPanel {
         add(cardContainer, BorderLayout.CENTER);
 
         //Button functionality
-        centerButton.addActionListener(e -> cardLayout.next(cardContainer));
-        flipButton.addActionListener(e -> cardLayout.next(cardContainer));
-        reverseButton.addActionListener(e -> cardLayout.next(cardContainer));
+        centerButton.addActionListener(e -> {
+            isFront = !isFront;
+            cardLayout.next(cardContainer);
+        });
+        flipButton.addActionListener(e -> {
+            isFront = !isFront;
+            cardLayout.next(cardContainer);
+        });
+        reverseButton.addActionListener(e -> {
+            isFront = !isFront;
+            cardLayout.next(cardContainer);
+        });
 
         rightButton.addActionListener(e -> mainPanel.setLearned(true));
         wrongButton.addActionListener(e -> mainPanel.setLearned(false));
@@ -119,6 +132,16 @@ public class FlashcardPanel extends JPanel {
     public void updateFlashcard(String question, String answer){
         questionLabel.setText(question);
         answerLabel.setText(answer);
+        isFront = true;
         cardLayout.first(cardContainer);
+    }
+
+    public void flipCard(){
+        isFront = !isFront;
+        cardLayout.next(cardContainer);
+    }
+
+    public boolean isFront(){
+        return isFront;
     }
 }

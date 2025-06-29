@@ -29,7 +29,10 @@ public class Flashcard {
         return (dateStudied != null) ? LocalDate.parse(dateStudied) : LocalDate.now();
     }
     public boolean isLearned(){
-        if(learnedCounter == 0) return false;
+        // Calculate due date by squaring learnedCounter and adding it onto last time studied
+        LocalDate dueDate = (LocalDate.parse(dateStudied).plusDays(learnedCounter * learnedCounter));
+        // Retrun false if due date is not after today
+        if (!dueDate.isAfter(LocalDate.now())) return false;
         else return true;
     }
 

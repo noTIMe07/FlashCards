@@ -14,10 +14,9 @@ public class Globals {
     }
 
     public static void setCurrentFolderPath(String newFolderPath) {
-        String oldFolderPath = currentFolderPath;
+        String oldFolderPath = "./src/FlashcardStorage/Default.json";
         currentFolderPath = newFolderPath;
         support.firePropertyChange("currentFolderPath", oldFolderPath, newFolderPath);
     }
-
 }
 

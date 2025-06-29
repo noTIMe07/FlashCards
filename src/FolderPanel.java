@@ -169,7 +169,6 @@ public class FolderPanel extends JPanel {
             if (!ConfirmDialog.showConfirmation(recycleButton, name)) {
                 return;
             }
-            System.out.println("Test");
             deleteFolder();
         });
 
