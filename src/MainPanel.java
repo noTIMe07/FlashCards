@@ -87,8 +87,8 @@ public class MainPanel extends JPanel {
     }
 
     public void setLearned(boolean learned) {
-        // If the front panel is showing, then return
-        if (flashcardPanel.isFront()) return;
+        // If the back panel is not showing, then return
+        if (flashcardPanel.isFront() || !flashcardPanel.isVisible()) return;
         // If flashcard is not null, then set it learned
         if (currentFlashcard != null) {
             // If learned = true then add 1 to learned Counter else reset
