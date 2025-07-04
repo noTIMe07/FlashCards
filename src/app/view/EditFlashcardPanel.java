@@ -9,7 +9,7 @@ import java.awt.*;
 import java.io.StringWriter;
 
 public class EditFlashcardPanel extends JPanel {
-    private MainPanel mainPanel;
+    private FlashcardHolderPanel flashcardHolderPanel;
     private JPanel cardContainer;
     private JPanel titleBar;
     private JButton closeButton;
@@ -18,8 +18,8 @@ public class EditFlashcardPanel extends JPanel {
     private JTextPane backTextPane;
     private JButton submitButton;
 
-    public EditFlashcardPanel(MainPanel mainPanel_) {
-        mainPanel = mainPanel_;
+    public EditFlashcardPanel(FlashcardHolderPanel flashcardHolderPanel) {
+        this.flashcardHolderPanel = flashcardHolderPanel;
 
         setLayout();
         setupButtons();
@@ -35,8 +35,8 @@ public class EditFlashcardPanel extends JPanel {
     private void setupButtons(){
         // When close button is pressed, then update app.view.FlashcardPanel and set Panel to app.view.FlashcardPanel
         closeButton.addActionListener(e -> {
-            mainPanel.study();
-            mainPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+            flashcardHolderPanel.study();
+            flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
         });
 
         // When submit button is pressed, then save input and reset Text Panes
@@ -53,11 +53,11 @@ public class EditFlashcardPanel extends JPanel {
                 String back = styledDocumentToHTML(backDoc);
 
                 // Save flashcard
-                mainPanel.setFlashcardContent(front, back);
+                flashcardHolderPanel.setFlashcardContent(front, back);
 
                 // Close Panel
-                mainPanel.study();
-                mainPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+                flashcardHolderPanel.study();
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -178,8 +178,8 @@ public class EditFlashcardPanel extends JPanel {
 
     // Update the content of the text Panes in order to set the editor up
     public void updateTextPanes(){
-        frontTextPane.setText(applyDefaultHtmlStyle(mainPanel.getCurrentFlashcard().getFront()));
-        backTextPane.setText(applyDefaultHtmlStyle(mainPanel.getCurrentFlashcard().getBack()));
+        frontTextPane.setText(applyDefaultHtmlStyle(flashcardHolderPanel.getCurrentFlashcard().getFront()));
+        backTextPane.setText(applyDefaultHtmlStyle(flashcardHolderPanel.getCurrentFlashcard().getBack()));
     }
 
     public static String applyDefaultHtmlStyle(String userHtmlContent) {

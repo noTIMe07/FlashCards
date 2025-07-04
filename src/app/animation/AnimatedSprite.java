@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class AnimatedSprite extends JComponent {
+public class AnimatedSprite extends StaticSprite{
     private BufferedImage[] idleFrames;
     private BufferedImage[] walkFrames;
     private BufferedImage[] jumpDownFrames;
@@ -20,8 +20,6 @@ public class AnimatedSprite extends JComponent {
     private int currentFrame;
     private int animationFrameDelay;
     private int frameDelay;
-    private int positionX, positionY;
-    private int backgroundOffSetX;
     private Timer timer;
     private NodeId currentNodeId;
     private SpriteMovementEngine movementEngine;
@@ -32,27 +30,27 @@ public class AnimatedSprite extends JComponent {
     private final int walkingSpeed = 3 ;
     private final int jumpingSpeed = 5;
 
-    //Keeps track if certain frames are played in order to make sure that every necessary frame is shows
+    //Keeps track if certain frames are played to make sure that every necessary frame is shows
     boolean framePlayed;
 
-    public AnimatedSprite(int positionX, int positionY) {
-        this.positionX = positionX;
-        this.positionY = positionY;
+    public AnimatedSprite(int positionX, int positionY, String path) {
+        super(positionX, positionY);
+        this.path = path;
 
         currentFrame = 0;
         animationFrameDelay = 120;
         frameDelay = 16;
-        backgroundOffSetX = 0;
+        offsetX = 0;
         currentNodeId = NodeId.WINDOWBOARD_LEFT;
         movementEngine = new SpriteMovementEngine(this);
-        idleFrames = loadFrames("./src/Sprites/IDLE.png", 480, 384, 8);
-        walkFrames = loadFrames("./src/Sprites/WALK.png", 480, 384, 12);
-        jumpDownFrames = loadFrames("./src/Sprites/JUMP_DOWN.png", 480, 384, 1);
-        jumpUpFrames = loadFrames("./src/Sprites/JUMP_UP.png", 480, 384, 1);
-        leapFrames = loadFrames("./src/Sprites/LEAP.png", 480, 384, 1);
-        sleepFrames = loadFrames("./src/Sprites/SLEEP.png", 480, 384, 8);
-        wakingUpFrames = loadFrames("./src/Sprites/WAKING_UP.png", 480, 384, 3);
-        fallingAsleepFrames = loadFrames("./src/Sprites/FALLING_ASLEEP.png", 480, 384, 3);
+        idleFrames = loadFrames(path + "/IDLE.png", 480, 384, 8);
+        walkFrames = loadFrames(path + "/WALK.png", 480, 384, 12);
+        jumpDownFrames = loadFrames(path + "/JUMP_DOWN.png", 480, 384, 1);
+        jumpUpFrames = loadFrames(path + "/JUMP_UP.png", 480, 384, 1);
+        leapFrames = loadFrames(path + "/LEAP.png", 480, 384, 1);
+        sleepFrames = loadFrames(path + "/SLEEP.png", 480, 384, 8);
+        wakingUpFrames = loadFrames(path + "/WAKING_UP.png", 480, 384, 3);
+        fallingAsleepFrames = loadFrames(path + "/FALLING_ASLEEP.png", 480, 384, 3);
         currentFrames = idleFrames;
         facingLeft = false;
         isJumping = false;
@@ -159,7 +157,9 @@ public class AnimatedSprite extends JComponent {
             if(onFinished != null) onFinished.run();
         }
     }
+
     public void fallAsleep(){
+        facingLeft = true;
         currentFrame = 0;
         Timer t = new Timer(frameDelay, e -> {
             if(currentFrame < 2 && currentFrames != fallingAsleepFrames){
@@ -178,12 +178,11 @@ public class AnimatedSprite extends JComponent {
         Timer t = new Timer(frameDelay, e -> {
             if(currentFrame < 2 && currentFrames != wakingUpFrames){
                 currentFrames = wakingUpFrames;
-                System.out.println("test");
             } else if (currentFrame >= 2) {
-                ((Timer) e.getSource()).stop();
                 isAsleep = false;
                 currentFrames = idleFrames;
                 if(currentFrame>=20){
+                    ((Timer) e.getSource()).stop();
                     if(onFinished != null) onFinished.run();
                 }
             }
@@ -233,13 +232,7 @@ public class AnimatedSprite extends JComponent {
     }
 
     public void setBackgroundOffSetX(int backgroundOffSetX){
-        this.backgroundOffSetX = backgroundOffSetX;
-    }
-
-    public void setPosition(int positionX, int positionY) {
-        this.positionX = positionX;
-        this.positionY = positionY;
-        repaint();
+        this.offsetX = backgroundOffSetX;
     }
 
     public void setFrameTypeIdle(){
@@ -249,7 +242,7 @@ public class AnimatedSprite extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int calPositionX = positionX - (idleFrames[0].getWidth()/2) - backgroundOffSetX;
+        int calPositionX = positionX - (idleFrames[0].getWidth()/2) - offsetX;
         int calPositionY = positionY - idleFrames[0].getHeight();
 
         if(!facingLeft){

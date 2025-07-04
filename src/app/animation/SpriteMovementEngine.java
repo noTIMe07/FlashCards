@@ -25,8 +25,8 @@ public class SpriteMovementEngine {
         waitingTime = 0;
 
         // Cat characteristics
-        laziness = 30;
-        awakeTime = 2;
+        laziness = 30; //30 usually
+        awakeTime = 3;
         minSleepingLength = 5;
 
 
@@ -34,7 +34,7 @@ public class SpriteMovementEngine {
         // Cat moves during sleep
 
         movementLoop = new Timer(1000, e -> {
-            if (cat.getCurrentNodeId()==goalNodeId) {
+            if (cat.getCurrentNodeId() == goalNodeId) {
                 if(random.nextInt(laziness) < waitingTime) {
                     waitingTime = 0;
                     goalNodeId = NodeId.values()[random.nextInt(NodeId.values().length)];

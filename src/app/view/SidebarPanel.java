@@ -15,10 +15,10 @@ public class SidebarPanel extends JPanel {
     private JPanel folderListPanel;
     private boolean folderCreationCooldown;
     private JButton folderButton;
-    private MainPanel mainPanel;
+    private CenterLayoutLP centerLayoutLP;
 
-    public SidebarPanel(MainPanel mainPanel_) {
-        mainPanel = mainPanel_;
+    public SidebarPanel(CenterLayoutLP centerLayoutLP) {
+        this.centerLayoutLP = centerLayoutLP;
         folderCreationCooldown = false;
 
         setLayout();
@@ -95,7 +95,7 @@ public class SidebarPanel extends JPanel {
 
     public void createFolder(String name){
         //add Folder to List
-        folderListPanel.add(new FolderPanel(name, mainPanel));
+        folderListPanel.add(new FolderPanel(name, centerLayoutLP));
         folderListPanel.revalidate();
         folderListPanel.repaint();
     }

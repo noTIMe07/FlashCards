@@ -9,7 +9,7 @@ import java.awt.*;
 import java.io.StringWriter;
 
 public class AddFlashcardPanel extends JPanel {
-    private MainPanel mainPanel;
+    private FlashcardHolderPanel flashcardHolderPanel;
     private JPanel cardContainer;
     private JPanel titleBar;
     private JButton closeButton;
@@ -18,8 +18,8 @@ public class AddFlashcardPanel extends JPanel {
     private JTextPane backTextPane;
     private JButton submitButton;
 
-    public AddFlashcardPanel(MainPanel mainPanel_) {
-        mainPanel = mainPanel_;
+    public AddFlashcardPanel(FlashcardHolderPanel flashcardHolderPanel) {
+        this.flashcardHolderPanel = flashcardHolderPanel;
 
         setLayout();
         setupButtons();
@@ -36,8 +36,8 @@ public class AddFlashcardPanel extends JPanel {
     private void setupButtons(){
         // When close button is pressed, then update app.view.FlashcardPanel and set Panel to app.view.FlashcardPanel
         closeButton.addActionListener(e -> {
-            mainPanel.study();
-            mainPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+            flashcardHolderPanel.study();
+            flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
         });
 
         // When submit button is pressed, then save input and reset Text Panes
@@ -52,7 +52,7 @@ public class AddFlashcardPanel extends JPanel {
                 String back = styledDocumentToHTML(backTextPane);
 
                 // Save flashcard
-                mainPanel.addFlashcard(front, back);
+                flashcardHolderPanel.addFlashcard(front, back);
 
                 // Reset text panes
                 frontTextPane.setText("");

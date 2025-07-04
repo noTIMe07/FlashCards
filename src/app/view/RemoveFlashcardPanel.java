@@ -9,7 +9,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class RemoveFlashcardPanel extends JPanel {
-    private MainPanel mainPanel;
+    private FlashcardHolderPanel flashcardHolderPanel;
     private JPanel cardContainer;
     private JPanel titleBar;
     private JButton closeButton;
@@ -17,8 +17,8 @@ public class RemoveFlashcardPanel extends JPanel {
     private JButton confirmButton;
     private JButton denyButton;
 
-    public RemoveFlashcardPanel(MainPanel mainPanel_) {
-        mainPanel = mainPanel_;
+    public RemoveFlashcardPanel(FlashcardHolderPanel flashcardHolderPanel) {
+        this.flashcardHolderPanel = flashcardHolderPanel;
 
         setLayout();
         setupButtons();
@@ -26,20 +26,20 @@ public class RemoveFlashcardPanel extends JPanel {
 
     private void setupButtons(){
         closeButton.addActionListener(e -> {
-            mainPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+            flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
         });
 
         confirmButton.addActionListener(e -> {
-            mainPanel.removeFlashcard();
-            mainPanel.setFlashcardPanelType(FlashcardPanelType.REMOVE_CONFIRM);
+            flashcardHolderPanel.removeFlashcard();
+            flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.REMOVE_CONFIRM);
             new javax.swing.Timer(900, evt -> {
-                mainPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
                 ((Timer) evt.getSource()).stop();
             }).start();
         });
 
         denyButton.addActionListener(e -> {
-            mainPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+            flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
         });
     }
 

@@ -20,7 +20,7 @@ import app.model.Flashcard;
 import com.google.gson.Gson;
 
 public class FolderPanel extends JPanel {
-    private MainPanel mainPanel;
+    private CenterLayoutLP centerLayoutLP;
     private String name;
     private JButton folderButton;
     private List<Flashcard> flashcards;
@@ -30,8 +30,8 @@ public class FolderPanel extends JPanel {
     private JPanel inner;
     Gson gson;
 
-    public FolderPanel(String name_, MainPanel mainPanel_) {
-        mainPanel = mainPanel_;
+    public FolderPanel(String name_, CenterLayoutLP centerLayoutLP) {
+        this.centerLayoutLP = centerLayoutLP;
         name = name_;
 
         setUp();
@@ -264,6 +264,6 @@ public class FolderPanel extends JPanel {
         }
 
         //Update mainPanel
-        mainPanel.setFlashcardVisibility(false);
+        centerLayoutLP.setFlashcardVisibility(false);
     }
 }

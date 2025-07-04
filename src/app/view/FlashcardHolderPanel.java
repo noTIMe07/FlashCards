@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import static app.view.FlashcardPanelType.FLASHCARD;
 
-public class MainPanel extends JPanel {
+public class FlashcardHolderPanel extends JPanel {
     private FlashcardPanel flashcardPanel;
     private AddFlashcardPanel addFlashcardPanel;
     private RemoveFlashcardPanel removeFlashcardPanel;
@@ -29,7 +29,6 @@ public class MainPanel extends JPanel {
     private static List<Flashcard> flashcards;
     private static String fileName;
     private static Flashcard currentFlashcard;
-    private Image backgroundImage;
     private int backgroundOffsetX;
     private Timer backgroundScrollTimer;
     private boolean isAnimatingBackground;
@@ -39,9 +38,10 @@ public class MainPanel extends JPanel {
     private FlashcardPanelType currentFlashcardType;
     AnimatedSprite cat;
 
-    public MainPanel(AnimatedSprite cat) {
+    public FlashcardHolderPanel(AnimatedSprite cat) {
         currentFlashcardType = FLASHCARD;
         this.cat = cat;
+
         setUp();
         loadFile();
         study();
@@ -152,7 +152,6 @@ public class MainPanel extends JPanel {
         removeFlashcardPanel = new RemoveFlashcardPanel(this);
         removeConfirmationFlashcardPanel = new RemoveConfirmationFlashcardPanel();
         editFlashcardPanel = new EditFlashcardPanel(this);
-        backgroundImage = new ImageIcon(getClass().getResource("/Images/background.png")).getImage();
         isAnimatingBackground = false;
 
         flashcardActionPanel = new FlashcardActionPanel(this);
@@ -240,11 +239,11 @@ public class MainPanel extends JPanel {
         return currentFlashcard;
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (backgroundImage != null) {
-            g.drawImage(backgroundImage, -backgroundOffsetX, 0, getWidth() * 2, getHeight(), this);
-        }
-    }
+//    @Override
+//    protected void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+//        if (backgroundImage != null) {
+//            g.drawImage(backgroundImage, -backgroundOffsetX, 0, getWidth() * 2, getHeight(), this);
+//        }
+//    }
 }

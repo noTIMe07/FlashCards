@@ -16,10 +16,10 @@ public class FlashcardPanel extends JPanel {
     private JButton reverseButton;
     private JButton wrongButton;
     private JButton rightButton;
-    private MainPanel mainPanel;
+    private FlashcardHolderPanel flashcardHolderPanel;
 
-    public FlashcardPanel(String question, String answer, MainPanel mainPanel_) {
-        mainPanel = mainPanel_;
+    public FlashcardPanel(String question, String answer, FlashcardHolderPanel flashcardHolderPanel) {
+        this.flashcardHolderPanel = flashcardHolderPanel;
 
         setLayout(new BorderLayout());
         setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
@@ -109,8 +109,8 @@ public class FlashcardPanel extends JPanel {
         flipButton.addActionListener(e -> cardLayout.next(cardContainer));
         reverseButton.addActionListener(e -> cardLayout.next(cardContainer));
 
-        rightButton.addActionListener(e -> mainPanel.setLearned(true));
-        wrongButton.addActionListener(e -> mainPanel.setLearned(false));
+        rightButton.addActionListener(e -> flashcardHolderPanel.setLearned(true));
+        wrongButton.addActionListener(e -> flashcardHolderPanel.setLearned(false));
     }
 
     private JLabel createCardLabel(String text) {

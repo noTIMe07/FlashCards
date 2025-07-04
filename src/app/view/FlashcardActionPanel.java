@@ -10,11 +10,10 @@ public class FlashcardActionPanel extends JPanel {
     private JActionButton addFlashcardButton;
     private JActionButton removeFlashcardButton;
     private JActionButton editFlashcardButton;
-    private MainPanel mainPanel;
+    private FlashcardHolderPanel flashcardHolderPanel;
 
-
-    public FlashcardActionPanel(MainPanel mainPanel_){
-        mainPanel = mainPanel_;
+    public FlashcardActionPanel(FlashcardHolderPanel flashcardHolderPanel){
+        this.flashcardHolderPanel = flashcardHolderPanel;
 
         setLayout();
         setupButtons();
@@ -49,20 +48,20 @@ public class FlashcardActionPanel extends JPanel {
 
     private void setupButtons(){
         addFlashcardButton.addActionListener(e -> {
-            if(mainPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD)){
-                mainPanel.setFlashcardPanelType(FlashcardPanelType.ADD);
+            if(flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD)){
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.ADD);
             }
         });
 
         removeFlashcardButton.addActionListener(e -> {
-            if(mainPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD) && !mainPanel.isDeckLearned()){
-                mainPanel.setFlashcardPanelType(FlashcardPanelType.REMOVE);
+            if(flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD) && !flashcardHolderPanel.isDeckLearned()){
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.REMOVE);
             }
         });
 
         editFlashcardButton.addActionListener(e -> {
-            if(mainPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD) && !mainPanel.isDeckLearned()){
-                mainPanel.setFlashcardPanelType(FlashcardPanelType.EDIT);
+            if(flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD) && !flashcardHolderPanel.isDeckLearned()){
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.EDIT);
             }
         });
 
