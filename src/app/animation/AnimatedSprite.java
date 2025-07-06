@@ -34,7 +34,7 @@ public class AnimatedSprite extends StaticSprite{
     boolean framePlayed;
 
     public AnimatedSprite(int positionX, int positionY, String path) {
-        super(positionX, positionY);
+        super(positionX, positionY, 0, 0);
         this.path = path;
 
         currentFrame = 0;
@@ -101,19 +101,19 @@ public class AnimatedSprite extends StaticSprite{
     }
 
     private void walk(int targetX, Timer t, Edge edge, Runnable onFinished){
-        if (Math.abs(positionX - targetX) > walkingSpeed) {
+        if (Math.abs(positionRatioX - targetX) > walkingSpeed) {
             // Move toward target
-            if (positionX < targetX) {
+            if (positionRatioX < targetX) {
                 facingLeft = false;
-                positionX += walkingSpeed;
+                positionRatioX += walkingSpeed;
             } else {
                 facingLeft = true;
-                positionX -= walkingSpeed;
+                positionRatioX -= walkingSpeed;
             }
             repaint();
         } else {
             // Final step: snap to target and stop
-            positionX = targetX;
+            positionRatioX = targetX;
             t.stop();
             currentNodeId = edge.to;
 
@@ -124,8 +124,8 @@ public class AnimatedSprite extends StaticSprite{
     }
 
     private void leap(int targetX, int targetY, Timer t, Edge edge, Runnable onFinished){
-        double deltaX = targetX - positionX;
-        double deltaY = targetY - positionY;
+        double deltaX = targetX - positionRatioX;
+        double deltaY = targetY - positionRatioY;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
         if(deltaX > 0) facingLeft = false;
@@ -138,19 +138,19 @@ public class AnimatedSprite extends StaticSprite{
             double dirX = deltaX / distance;
             double dirY = deltaY / distance;
             if(isJumping==false && edge.movementType == MovementType.JUMP_DOWN){
-                positionX += dirX * jumpingSpeed*10;
-                positionY += dirY * jumpingSpeed*10;
+                positionRatioX += dirX * jumpingSpeed*10;
+                positionRatioY += dirY * jumpingSpeed*10;
                 isJumping = true;
             }
             else {
-                positionX += dirX * jumpingSpeed * 1.2;
-                positionY += dirY * jumpingSpeed * 1.2;
+                positionRatioX += dirX * jumpingSpeed * 1.2;
+                positionRatioY += dirY * jumpingSpeed * 1.2;
             }
             repaint();
         }
         else {
-            positionX = targetX;
-            positionY = targetY;
+            positionRatioX = targetX;
+            positionRatioY = targetY;
             t.stop();
             currentNodeId = edge.to;
             isJumping = false;
