@@ -17,12 +17,12 @@ public class Graph {
         addEdge(NodeId.TABLE_MIDDLE, NodeId.CHAIR, MovementType.JUMP_DOWN, true);
         addEdge(NodeId.CHAIR_SIT, NodeId.TABLE_MIDDLE, MovementType.JUMP_UP, true);
         addEdge(NodeId.CHAIR, NodeId.CHAIR_SIT, MovementType.SIT, false);
-        addEdge(NodeId.CHAIR_SIT, NodeId.FLOOR_BELOWTABLE, MovementType.JUMP_DOWN, true);
-        addEdge(NodeId.FLOOR_BELOWTABLE, NodeId.CHAIR, MovementType.JUMP_UP, true);
-        addEdge(NodeId.FLOOR_BELOWTABLE, NodeId.FLOOR_LEFT, MovementType.WALK, false);
-        addEdge(NodeId.TABLE_RIGHT, NodeId.SHELF_LEFT, MovementType.JUMP_DOWN, true);
-        addEdge(NodeId.SHELF_LEFT, NodeId.TABLE_RIGHT, MovementType.JUMP_UP, true);
-        addEdge(NodeId.SHELF_LEFT, NodeId.SHELF_RIGHT, MovementType.WALK, false);
+//        addEdge(NodeId.CHAIR_SIT, NodeId.FLOOR_BELOWTABLE, MovementType.JUMP_DOWN, true);
+//        addEdge(NodeId.FLOOR_BELOWTABLE, NodeId.CHAIR, MovementType.JUMP_UP, true);
+//        addEdge(NodeId.FLOOR_BELOWTABLE, NodeId.FLOOR_LEFT, MovementType.WALK, false);
+//        addEdge(NodeId.TABLE_RIGHT, NodeId.SHELF_LEFT, MovementType.JUMP_DOWN, true);
+//        addEdge(NodeId.SHELF_LEFT, NodeId.TABLE_RIGHT, MovementType.JUMP_UP, true);
+//        addEdge(NodeId.SHELF_LEFT, NodeId.SHELF_RIGHT, MovementType.WALK, false);
     }
 
     private void addEdge(NodeId node1, NodeId node2, MovementType movementType, boolean directed){

@@ -59,9 +59,14 @@ public class StaticSprite extends JComponent {
     }
 
     // getPosition returns point at Index, most left point is index 0
-//    public Point getPosition(int positionIndex){
-//
-//    }
+    public Point getPosition(){
+        System.out.println(positionX + " " + positionY);
+        return new Point(positionX, positionY);
+    }
+
+    public double getScale(){
+        return scale;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {

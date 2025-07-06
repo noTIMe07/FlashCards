@@ -63,7 +63,11 @@ public class AnimatedSprite extends StaticSprite{
         });
         timer.start();
 
-        sitOnTheWindowBoard();
+
+        new Timer(500, e -> {
+            ((Timer)e.getSource()).stop();
+            sitOnTheWindowBoard();
+        }).start();
     }
 
     public void playMovement(Edge edge, Runnable onFinished) {
@@ -203,6 +207,7 @@ public class AnimatedSprite extends StaticSprite{
 
     public void sitOnTheWindowBoard(){
         setPosition(NodeId.WINDOWBOARD_LEFT.getPosition().x, NodeId.WINDOWBOARD_LEFT.getPosition().y);
+        System.out.println(NodeId.WINDOWBOARD_LEFT.getPosition().x + " " + NodeId.WINDOWBOARD_LEFT.getPosition().y);
     }
 
     public void moveTo(NodeId goadlId){
