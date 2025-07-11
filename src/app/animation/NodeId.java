@@ -37,6 +37,7 @@ public enum NodeId {
 //    SHELF_LEFT(null, 0, 0),
 //    SHELF_RIGHT(null,0, 0);
 
+    private double ratioX, ratioY;
     private int offsetX, offsetY;
     StaticSprite sprite;
 
@@ -48,6 +49,13 @@ public enum NodeId {
 
     public void setSprite(StaticSprite sprite){
         this.sprite = sprite;
+    }
+
+    public void setRatioAndOffset(double rx, double ry, int ox, int oy){
+        ratioX = rx;
+        ratioY = ry;
+        offsetX = ox;
+        offsetY = oy;
     }
 
     // getPosition return point from index, most left point is index 0

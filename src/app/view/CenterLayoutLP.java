@@ -23,18 +23,22 @@ public class CenterLayoutLP extends JLayeredPane {
     }
 
     public void setup(){
-        windowStaticSprite = new StaticSprite(0.5, 0.35, -325, 0, "./src/Sprites/Window.png");
+        NodeId[] idList;
+        idList = new NodeId[] { WINDOWBOARD_LEFT, WINDOWBOARD_RIGHT };
+        windowStaticSprite = new StaticSprite(960, 380, -300, "./src/Sprites/Window.png", idList);
         WINDOWBOARD_LEFT.setSprite(windowStaticSprite);
         WINDOWBOARD_RIGHT.setSprite(windowStaticSprite);
-        tableStaticSprite = new StaticSprite(0.5, 0.67, 0, 0, "./src/Sprites/Table.png");
+        idList = new NodeId[] { TABLE_LEFT, TABLE_MIDDLE, TABLE_RIGHT};
+        tableStaticSprite = new StaticSprite(960, 720, 0,"./src/Sprites/Table.png", idList);
         TABLE_LEFT.setSprite(tableStaticSprite);
         TABLE_MIDDLE.setSprite(tableStaticSprite);
         TABLE_RIGHT.setSprite(tableStaticSprite);
-        chairStaticSprite = new StaticSprite(0.5, 0.67, 0, 0, "./src/Sprites/Chair.png");
+        idList = new NodeId[] {CHAIR, CHAIR_SIT};
+        chairStaticSprite = new StaticSprite(960, 720, 0,"./src/Sprites/Chair.png", idList);
         CHAIR.setSprite(chairStaticSprite);
         CHAIR_SIT.setSprite(chairStaticSprite);
 
-        animatedCat = new AnimatedSprite(0, 0, "./src/Sprites/Cat");
+        animatedCat = new AnimatedSprite("./src/Sprites/Cat");
 
         add(animatedCat, DEFAULT_LAYER);
         add(windowStaticSprite, DEFAULT_LAYER);
@@ -56,6 +60,7 @@ public class CenterLayoutLP extends JLayeredPane {
         Dimension size = getSize();
         flashcardHolderPanel.setBounds(0, 0, size.width, size.height);
         animatedCat.setBounds(0, 0, size.width, size.height);
+        animatedCat.recalculatePositionAndScale(size.width, size.height);
         windowStaticSprite.setBounds(0, 0, size.width, size.height);
         windowStaticSprite.recalculatePositionAndScale(size.width, size.height);
         tableStaticSprite.setBounds(0, 0, size.width, size.height);

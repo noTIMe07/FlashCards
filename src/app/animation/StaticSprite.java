@@ -7,27 +7,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class StaticSprite extends JComponent {
-    protected double positionRatioX, positionRatioY;
-    protected int positionX, positionY, scaledWidth, scaledHeight, scaledOffsetY, scaledOffsetX;
-    protected double scale;
-    protected int offsetX, offsetY;
-    protected String path;
-
+public class StaticSprite extends Sprite {
     private BufferedImage sprite;
+    private NodeId[] idList;
 
-    public StaticSprite(double positionRatioX, double positionRatioY, int offsetX, int offsetY) {
-        // This constructor is used by all classes that extend StaticSprite, because no path is needed
-        this.positionRatioX = positionRatioX;
-        this.positionRatioY = positionRatioY;
+    public StaticSprite(int positionX, int positionY, int offsetX, String path, NodeId[] idList) {
+        super(path);
+
         this.offsetX = offsetX;
-        this.offsetY = offsetY;
-    }
-
-    public StaticSprite(double positionRatioX, double positionRatioY, int offsetX, int offsetY, String path) {
-        // This constructor is used by all sprite objects, to initialize the path
-        this(positionRatioX, positionRatioY, offsetX, offsetY);
-        this.path = path;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.idList = idList;
 
         loadSprite();
     }
@@ -42,20 +32,35 @@ public class StaticSprite extends JComponent {
 
     public void recalculatePositionAndScale(int width, int height) {
         // When screen size changes, update the position and scale relative to screen size
-        positionX = (int) (positionRatioX * width);
-        positionY = (int) (positionRatioY * height);
+        this.screenWidth = width;
+        this.screenHeight = height;
 
-        scale = (double) height/1080;
-        scaledWidth = (int) (sprite.getWidth() * scale);
-        scaledHeight = (int) (sprite.getHeight() * scale);
-        scaledOffsetX = (int) (offsetX * scale);
-        scaledOffsetY = (int) (offsetY * scale);
+        positionScaleX = (double) screenWidth / 1920;
+        positionScaleY = (double) screenHeight / 1080;
+        spriteScale = (double) screenHeight / 1080;
+        scaledWidth = (int) (sprite.getWidth() * spriteScale);
+        scaledHeight = (int) (sprite.getHeight() * spriteScale);
+
+        calPositionX = (int) (positionX * positionScaleX);
+        calPositionY = (int) (positionY * positionScaleY);
+
+        // The sprite coordinate is the center of the sprite
+        calPositionX = calPositionX - (scaledWidth / 2);
+        calPositionY = calPositionY - (scaledHeight / 2);
+
+        repaint();
     }
 
     public void setPosition(int positionX, int positionY) {
         this.positionX = positionX;
         this.positionY = positionY;
         repaint();
+    }
+
+    private void setIdPosition(){
+        for(NodeId id : idList){
+            //id.setRatioAndOffset(positionRatioX, positionRatioY, offsetX, offsetY);
+        }
     }
 
     // getPosition returns point at Index, most left point is index 0
@@ -65,7 +70,7 @@ public class StaticSprite extends JComponent {
     }
 
     public double getScale(){
-        return scale;
+        return spriteScale;
     }
 
     @Override
@@ -76,11 +81,7 @@ public class StaticSprite extends JComponent {
 
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // The sprite coordinate is the center of the sprite
-        int calPositionX = positionX - (scaledWidth / 2) + scaledOffsetX;
-        int calPositionY = positionY - (scaledHeight / 2) + scaledOffsetY;
-
-        g2d.drawImage(sprite, calPositionX, calPositionY, scaledWidth, scaledHeight, null);
+        g2d.drawImage(sprite, calPositionX + (int) (offsetX * positionScaleY), calPositionY, scaledWidth, scaledHeight, null);
 
         g2d.dispose();
     }

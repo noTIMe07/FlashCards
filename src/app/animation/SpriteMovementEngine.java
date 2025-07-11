@@ -25,8 +25,8 @@ public class SpriteMovementEngine {
         waitingTime = 0;
 
         // Cat characteristics
-        laziness = 30; //30 usually
-        awakeTime = 3;
+        laziness = 50; //30 usually
+        awakeTime = 8;
         minSleepingLength = 5;
 
 
