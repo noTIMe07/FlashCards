@@ -30,17 +30,15 @@ public class FlashcardHolderPanel extends JPanel {
     private static String fileName;
     private static Flashcard currentFlashcard;
     private int backgroundOffsetX;
-    private Timer backgroundScrollTimer;
-    private boolean isAnimatingBackground;
     private JPanel outerPanel;
     private JPanel flashcardHolderPanel;
     private CardLayout cardLayout;
     private FlashcardPanelType currentFlashcardType;
-    AnimatedSprite cat;
+    private CenterLayoutLP centerLayoutLP;
 
-    public FlashcardHolderPanel(AnimatedSprite cat) {
+    public FlashcardHolderPanel(CenterLayoutLP centerLayoutLP) {
         currentFlashcardType = FLASHCARD;
-        this.cat = cat;
+        this.centerLayoutLP = centerLayoutLP;
 
         setUp();
         loadFile();
@@ -61,46 +59,6 @@ public class FlashcardHolderPanel extends JPanel {
             }
         }
         setFlashcardVisibility(false);
-    }
-
-    public void playBackgroundScrollAnimation(int durationMillis, Runnable onComplete) {
-        if (isAnimatingBackground) return;
-
-        isAnimatingBackground = true;
-        backgroundOffsetX = 0;
-
-        int panelWidth = getWidth();
-        long startTime = System.currentTimeMillis();
-
-        backgroundScrollTimer = new Timer(16, null);
-        backgroundScrollTimer.addActionListener(e -> {
-
-            long elapsed = System.currentTimeMillis() - startTime;
-            double t = Math.min(1.0, (double) elapsed / durationMillis);
-
-            // Easing function: ease-in-out
-            double easedProgress = easeInOutQuart(t);
-
-            if (easedProgress >= 1) {
-                backgroundScrollTimer.stop();
-                backgroundOffsetX = panelWidth;
-                isAnimatingBackground = false;
-
-                if (onComplete != null) onComplete.run();
-            } else {
-                backgroundOffsetX = (int) (easedProgress * panelWidth);
-                cat.setBackgroundOffSetX((int) (easedProgress*panelWidth));
-            }
-            repaint();
-        });
-
-        backgroundScrollTimer.start();
-    }
-
-    private double easeInOutQuart(double x) {
-        return x < 0.5
-                ? 8 * Math.pow(x, 4)
-                : 1 - Math.pow(-2 * x + 2, 4) / 2;
     }
 
     public boolean isDeckLearned() {
@@ -152,7 +110,6 @@ public class FlashcardHolderPanel extends JPanel {
         removeFlashcardPanel = new RemoveFlashcardPanel(this);
         removeConfirmationFlashcardPanel = new RemoveConfirmationFlashcardPanel();
         editFlashcardPanel = new EditFlashcardPanel(this);
-        isAnimatingBackground = false;
 
         flashcardActionPanel = new FlashcardActionPanel(this);
 
@@ -214,7 +171,7 @@ public class FlashcardHolderPanel extends JPanel {
 
     public void setFlashcardVisibility(boolean visibility) {
         if (!flashcardHolderPanel.isVisible() && visibility) {
-            playBackgroundScrollAnimation(1000, () -> {
+            centerLayoutLP.playBackgroundScrollAnimation(1000, () -> {
                 flashcardHolderPanel.setVisible(true);
             });
         } else flashcardHolderPanel.setVisible(visibility);

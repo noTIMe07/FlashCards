@@ -1,5 +1,7 @@
 package app.animation;
 
+import app.view.CenterLayoutLP;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -41,8 +43,8 @@ public class AnimatedSprite extends Sprite{
     //Keeps track if certain frames are played to make sure that every necessary frame is shown
     boolean framePlayed;
 
-    public AnimatedSprite(String path) {
-        super(path);
+    public AnimatedSprite(String path, CenterLayoutLP layoutLP) {
+        super(path, layoutLP);
 
         currentNodeId = NodeId.WINDOWBOARD_LEFT;
         movementEngine = new SpriteMovementEngine(this);
@@ -78,8 +80,10 @@ public class AnimatedSprite extends Sprite{
     public void playMovement(Edge edge, Runnable onFinished) {
         Timer movementTimer = new Timer(AnimationFrameDelay, null);
 
-        int targetX = edge.to.getPosition().x;
-        int targetY = edge.to.getPosition().y;
+        layoutLP.setCatLayer(edge.layerIndex);
+
+        int targetX = edge.to.getCenterOffset().x;
+        int targetY = edge.to.getCenterOffset().y;
 
         switch (edge.movementType){
             case SIT: currentFrames = idleFrames;
@@ -109,20 +113,19 @@ public class AnimatedSprite extends Sprite{
         movementTimer.start();
     }
 
-    private void walk(int targetX, Timer t, Edge edge, Runnable onFinished){
-        if (Math.abs(positionX - targetX) > walkingSpeed) {
+    private void walk(int targetOffsetX, Timer t, Edge edge, Runnable onFinished){
+        if (Math.abs(centerOffsetX - targetOffsetX) > walkingSpeed) {
             // Move toward target
-            if (positionX < targetX) {
+            if (centerOffsetX < targetOffsetX) {
                 facingLeft = false;
-                positionX += walkingSpeed;
+                centerOffsetX += walkingSpeed;
             } else {
                 facingLeft = true;
-                positionX -= walkingSpeed;
+                centerOffsetX -= walkingSpeed;
             }
-            repaint();
         } else {
             // Final step: snap to target and stop
-            positionX = targetX;
+            centerOffsetX = targetOffsetX;
             t.stop();
             currentNodeId = edge.to;
 
@@ -130,11 +133,13 @@ public class AnimatedSprite extends Sprite{
                 onFinished.run();
             }
         }
+        recalculatePositionAndScale(screenWidth, screenHeight);
+        repaint();
     }
 
-    private void leap(int targetX, int targetY, Timer t, Edge edge, Runnable onFinished){
-        double deltaX = targetX - positionX;
-        double deltaY = targetY - positionY;
+    private void leap(int targetOffsetX, int targetOffsetY, Timer t, Edge edge, Runnable onFinished){
+        double deltaX = targetOffsetX - centerOffsetX;
+        double deltaY = targetOffsetY - centerOffsetY;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
         // If delta X > 0, then Sprite has to move right, so facing Left is false
@@ -147,24 +152,25 @@ public class AnimatedSprite extends Sprite{
             double dirX = deltaX / distance;
             double dirY = deltaY / distance;
             if(isJumping==false && edge.movementType == MovementType.JUMP_DOWN){
-                positionX += dirX * jumpingSpeed*10;
-                positionY += dirY * jumpingSpeed*10;
+                centerOffsetX += dirX * jumpingSpeed*10;
+                centerOffsetY += dirY * jumpingSpeed*10;
                 isJumping = true;
             }
             else {
-                positionX += dirX * jumpingSpeed * 1.2;
-                positionY += dirY * jumpingSpeed * 1.2;
+                centerOffsetX += dirX * jumpingSpeed * 1.2;
+                centerOffsetY += dirY * jumpingSpeed * 1.2;
             }
-            repaint();
         }
         else {
-            positionX = targetX;
-            positionY = targetY;
+            centerOffsetX = targetOffsetX;
+            centerOffsetY = targetOffsetY;
             t.stop();
             currentNodeId = edge.to;
             isJumping = false;
             if(onFinished != null) onFinished.run();
         }
+        recalculatePositionAndScale(screenWidth, screenHeight);
+        repaint();
     }
 
     public void fallAsleep(){
@@ -211,13 +217,7 @@ public class AnimatedSprite extends Sprite{
     }
 
     public void sitOnTheWindowBoard(){
-        setPosition(NodeId.WINDOWBOARD_LEFT.getPosition().x, NodeId.WINDOWBOARD_LEFT.getPosition().y);
-        System.out.println(NodeId.WINDOWBOARD_LEFT.getPosition().x + " " + NodeId.WINDOWBOARD_LEFT.getPosition().y);
-    }
-
-    public void moveTo(NodeId goadlId){
-        movementEngine.moveTo(goadlId);
-        System.out.println("Test");
+        setCenterOffset(NodeId.WINDOWBOARD_LEFT.getCenterOffset().x, NodeId.WINDOWBOARD_LEFT.getCenterOffset().y);
     }
 
     public BufferedImage[] loadFrames(String path, int frameWidth, int frameHeight, int frameCount) {
@@ -241,32 +241,47 @@ public class AnimatedSprite extends Sprite{
         return isAsleep;
     }
 
-    public void setBackgroundOffSetX(int backgroundOffSetX){
-        //this.offsetX = backgroundOffSetX;
-    }
-
     public void setFrameTypeIdle(){
         currentFrames = idleFrames;
     }
 
     @Override
-    public void recalculatePositionAndScale(int width, int height) {
-        // When screen size changes, update the position and scale relative to screen size
-        this.screenWidth = width;
-        this.screenHeight = height;
-
-        positionScaleX = (double) screenWidth / 1920;
-        positionScaleY = (double) screenHeight / 1080;
-        spriteScale = (double) screenHeight / 1080;
-
-//        scaledOffsetX = (int) (offsetX * scale);
-//        scaledOffsetY = (int) (offsetY * scale);
+    public void setBackgroundOffSetX(int backgroundOffSetX) {
+        this.backgroundOffsetX = backgroundOffSetX;
+        recalculatePositionAndScale(screenWidth, screenHeight);
     }
 
     @Override
-    public void setPosition(int positionX, int positionY) {
-        this.positionX = positionX;
-        this.positionY = positionY;
+    public void recalculatePositionAndScale(int width, int height) {
+        this.screenWidth = width;
+        this.screenHeight = height;
+
+        // offset Scale is the ratio between the current screenWidth and the standard screenWidth
+        offsetScaleX = (double) screenWidth / 1920;
+        offsetScaleY = (double) screenHeight / 1080;
+        spriteScale = (double) screenHeight / 1080;
+        scaledWidth = (int) (currentFrames[0].getWidth() * spriteScale);
+        scaledHeight = (int) (currentFrames[0].getHeight() * spriteScale);
+
+        calPositionX = (int) (960 * offsetScaleX);
+        calPositionY = (int) (540 * offsetScaleY);
+
+        // The sprite coordinate is the bottom center of the sprite
+        calPositionX = calPositionX + (scaledWidth / 2);
+        calPositionY = calPositionY - (scaledHeight / 2);
+
+        calPositionX += (int) ((centerOffsetX + backgroundOffsetX) * offsetScaleY);
+        calPositionY += (int) (centerOffsetY * offsetScaleY);
+
+        repaint();
+    }
+
+    @Override
+    public void setCenterOffset(int centerOffsetX, int centerOffsetY) {
+        this.centerOffsetX = centerOffsetX;
+        this.centerOffsetY = centerOffsetY;
+
+        recalculatePositionAndScale(screenWidth, screenHeight);
     }
 
     @Override
@@ -274,21 +289,11 @@ public class AnimatedSprite extends Sprite{
         super.paintComponent(g);
         currentFrame = currentFrames[currentFrameIndex % currentFrames.length];
 
-        int calPositionX = positionX - (idleFrames[0].getWidth()/2) - offsetX;
-        int calPositionY = positionY - idleFrames[0].getHeight();
-
-        // Scale the position
-        calPositionX = (int) (calPositionX * positionScaleX);
-        calPositionY = (int) (calPositionY * positionScaleY);
-
-        scaledWidth = (int) (currentFrame.getWidth() * spriteScale);
-        scaledHeight = (int) (currentFrame.getHeight() * spriteScale);
-
         if(!facingLeft){
             g.drawImage(currentFrame, calPositionX, calPositionY, - scaledWidth, scaledHeight, null);
         }
         else{
-            g.drawImage(currentFrame, calPositionX, calPositionY, scaledWidth, scaledHeight, null);
+            g.drawImage(currentFrame, calPositionX - scaledWidth, calPositionY, scaledWidth, scaledHeight, null);
         }
     }
 }

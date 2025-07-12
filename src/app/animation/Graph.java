@@ -8,15 +8,15 @@ public class Graph {
     public Graph(){
         matrix = new Edge[NodeId.values().length][NodeId.values().length];
 
-        addEdge(NodeId.WINDOWBOARD_LEFT, NodeId.WINDOWBOARD_RIGHT, MovementType.WALK, false);
-        addEdge(NodeId.WINDOWBOARD_LEFT, NodeId.TABLE_LEFT, MovementType.JUMP_DOWN, true);
-        addEdge(NodeId.TABLE_LEFT, NodeId.WINDOWBOARD_LEFT, MovementType.JUMP_UP, true);
-        addEdge(NodeId.TABLE_LEFT, NodeId.TABLE_MIDDLE, MovementType.WALK, false);
-        addEdge(NodeId.TABLE_MIDDLE, NodeId.TABLE_RIGHT, MovementType.WALK, false);
-        addEdge(NodeId.TABLE_LEFT, NodeId.TABLE_RIGHT, MovementType.WALK, false);
-        addEdge(NodeId.TABLE_MIDDLE, NodeId.CHAIR, MovementType.JUMP_DOWN, true);
-        addEdge(NodeId.CHAIR_SIT, NodeId.TABLE_MIDDLE, MovementType.JUMP_UP, true);
-        addEdge(NodeId.CHAIR, NodeId.CHAIR_SIT, MovementType.SIT, false);
+        addEdge(NodeId.WINDOWBOARD_LEFT, NodeId.WINDOWBOARD_RIGHT, MovementType.WALK, 3,false);
+        addEdge(NodeId.WINDOWBOARD_LEFT, NodeId.TABLE_LEFT, MovementType.JUMP_DOWN, 3,true);
+        addEdge(NodeId.TABLE_LEFT, NodeId.WINDOWBOARD_LEFT, MovementType.JUMP_UP, 3, true);
+        addEdge(NodeId.TABLE_LEFT, NodeId.TABLE_MIDDLE, MovementType.WALK, 3,false);
+        addEdge(NodeId.TABLE_MIDDLE, NodeId.TABLE_RIGHT, MovementType.WALK, 1, false);
+        addEdge(NodeId.TABLE_LEFT, NodeId.TABLE_RIGHT, MovementType.WALK, 1, false);
+        addEdge(NodeId.TABLE_MIDDLE, NodeId.CHAIR, MovementType.JUMP_DOWN, 3, true);
+        addEdge(NodeId.CHAIR_SIT, NodeId.TABLE_MIDDLE, MovementType.JUMP_UP, 3, true);
+        addEdge(NodeId.CHAIR, NodeId.CHAIR_SIT, MovementType.SIT, 3, false);
 //        addEdge(NodeId.CHAIR_SIT, NodeId.FLOOR_BELOWTABLE, MovementType.JUMP_DOWN, true);
 //        addEdge(NodeId.FLOOR_BELOWTABLE, NodeId.CHAIR, MovementType.JUMP_UP, true);
 //        addEdge(NodeId.FLOOR_BELOWTABLE, NodeId.FLOOR_LEFT, MovementType.WALK, false);
@@ -25,9 +25,9 @@ public class Graph {
 //        addEdge(NodeId.SHELF_LEFT, NodeId.SHELF_RIGHT, MovementType.WALK, false);
     }
 
-    private void addEdge(NodeId node1, NodeId node2, MovementType movementType, boolean directed){
-        matrix[node1.ordinal()][node2.ordinal()] = new Edge(node1, node2, movementType);
-        if(!directed) matrix[node2.ordinal()][node1.ordinal()] = new Edge(node2, node1, movementType);
+    private void addEdge(NodeId node1, NodeId node2, MovementType movementType, int layerIndex, boolean directed){
+        matrix[node1.ordinal()][node2.ordinal()] = new Edge(node1, node2, movementType, layerIndex);
+        if(!directed) matrix[node2.ordinal()][node1.ordinal()] = new Edge(node2, node1, movementType, layerIndex);
     }
 
     public LinkedList<Edge> findPath(NodeId from, NodeId to){
