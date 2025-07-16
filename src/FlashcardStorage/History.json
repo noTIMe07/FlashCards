@@ -1,11 +1,5 @@
 [
   {
-    "front": "What year did the United States declare independence?",
-    "back": "1776",
-    "learnedCounter": 2,
-    "dateStudied": "2025-06-29"
-  },
-  {
     "front": "What historical event began on July 14, 1789, with the storming of the Bastille?",
     "back": "The French Revolution",
     "learnedCounter": 2,
@@ -46,5 +40,11 @@
     "back": "The Berlin Wall",
     "learnedCounter": 1,
     "dateStudied": "2025-06-29"
+  },
+  {
+    "front": "What year did the United States declare independence?",
+    "back": "1776",
+    "learnedCounter": 0,
+    "dateStudied": "2025-07-16"
   }
 ]
