@@ -17,7 +17,27 @@ public class Main {
     }
 }
 
+/*
+Functionality:
+
+click folder to show default panel
+double click folder to rename
+
+Cat:
+
+When flashcard is shown then action buttons, else cat features
+roadmap with cat items as rewards
+nice background and sprtes
+fix the sleeping bug
+
+Shipping:
+
+Logo
+Name
 
 
-//double click folder to rename
-//click folder to show default panel
+
+
+
+
+ */

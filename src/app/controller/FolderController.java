@@ -2,6 +2,7 @@ package app.controller;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Objects;
 
 public class FolderController {
     private static String currentFolderPath = "./src/FlashcardStorage/Default.json";
@@ -16,9 +17,13 @@ public class FolderController {
     }
 
     public static void setCurrentFolderPath(String newFolderPath) {
-        String oldFolderPath = "./src/FlashcardStorage/Default.json";
-        currentFolderPath = newFolderPath;
-        support.firePropertyChange("currentFolderPath", oldFolderPath, newFolderPath);
+        String defaultFolderPath = "./src/FlashcardStorage/Default.json";
+
+        // If new and current folder path are the same then stick with default folder path
+        if(Objects.equals(currentFolderPath, newFolderPath)) currentFolderPath = defaultFolderPath;
+        else currentFolderPath = newFolderPath;
+
+        support.firePropertyChange("currentFolderPath", defaultFolderPath, newFolderPath);
     }
 }
 

@@ -54,7 +54,7 @@ public class CenterLayoutLP extends JLayeredPane {
         add(flashcardHolderPanel, PALETTE_LAYER);
     }
 
-    public void playBackgroundScrollAnimation(int durationMillis, Runnable onComplete) {
+    public void playBackgroundScrollAnimationIn(int durationMillis, Runnable onComplete) {
         if (isAnimatingBackground) return;
 
         isAnimatingBackground = true;
@@ -85,10 +85,45 @@ public class CenterLayoutLP extends JLayeredPane {
         backgroundScrollTimer.start();
     }
 
+    public void playBackgroundScrollAnimationOut(int durationMillis, Runnable onComplete) {
+        if (isAnimatingBackground) return;
+
+        isAnimatingBackground = true;
+
+        long startTime = System.currentTimeMillis();
+
+        backgroundScrollTimer = new Timer(16, null);
+        backgroundScrollTimer.addActionListener(e -> {
+
+            long elapsed = System.currentTimeMillis() - startTime;
+            double t = Math.min(1.0, (double) elapsed / durationMillis);
+
+            // Easing function: ease-in-out
+            double easedProgress = inverseEaseInOutQuart(t);
+
+            if (easedProgress <= 0) {
+                backgroundScrollTimer.stop();
+                setBackgroundOffsetX(0);
+                isAnimatingBackground = false;
+
+                if (onComplete != null) onComplete.run();
+            } else {
+                setBackgroundOffsetX((int) (easedProgress * - 1920));
+            }
+            repaint();
+        });
+
+        backgroundScrollTimer.start();
+    }
+
     private double easeInOutQuart(double x) {
         return x < 0.5
                 ? 8 * Math.pow(x, 4)
                 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+    }
+
+    private double inverseEaseInOutQuart(double x) {
+        return(1 - easeInOutQuart(x));
     }
 
     public void flipCard(){

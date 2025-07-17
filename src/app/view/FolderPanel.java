@@ -101,10 +101,12 @@ public class FolderPanel extends JPanel {
         inner.setLayout(new BoxLayout(inner, BoxLayout.X_AXIS));
         //Folder color
         setFolderColor();
+
         FolderController.addPropertyChangeListener(evt -> {
             setFolderColor();
             setFolderBorder();
         });
+
         //Folder Border
         inner.setBorder(new LineBorder(Style.OUTLINE_COLOR, 2, false));
         inner.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -171,7 +173,7 @@ public class FolderPanel extends JPanel {
         inner.add(recycleButton);
 
         recycleButton.addActionListener(e -> {
-            //If user doesn't  confirm, then return
+            //If user doesn't confirm, then return
             if (!ConfirmDialog.showConfirmation(recycleButton, name)) {
                 return;
             }

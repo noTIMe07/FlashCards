@@ -133,7 +133,7 @@ public class FlashcardHolderPanel extends JPanel {
             e.printStackTrace();
         }
     }
-
+    
     private void setUp() {
         //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
@@ -166,6 +166,7 @@ public class FlashcardHolderPanel extends JPanel {
         flashcardHolderPanel.add(removeFlashcardPanel, "RemoveFlashcardPanel");
         flashcardHolderPanel.add(removeConfirmationFlashcardPanel, "RemoveConfirmationFlashcardPanel");
         flashcardHolderPanel.add(editFlashcardPanel, "EditFlashcardPanel");
+        flashcardHolderPanel.setVisible(false);
         outerPanel.add(flashcardHolderPanel);
         add(outerPanel, BorderLayout.CENTER);
     }
@@ -180,16 +181,15 @@ public class FlashcardHolderPanel extends JPanel {
             setFlashcardVisibility(true);
         }
 
-        if (panelType == FlashcardPanelType.EDIT) {
-            editFlashcardPanel.updateTextPanes();
-        }
-
         if (panelType == FlashcardPanelType.FLASHCARD) {
             flashcardActionPanel.styleButton(0);
         } else if (panelType == FlashcardPanelType.ADD) {
             flashcardActionPanel.styleButton(1);
         } else if (panelType == FlashcardPanelType.REMOVE) {
             flashcardActionPanel.styleButton(2);
+        } else if (panelType == FlashcardPanelType.EDIT) {
+            flashcardActionPanel.styleButton(3);
+            editFlashcardPanel.updateTextPanes();
         }
     }
 
@@ -209,11 +209,17 @@ public class FlashcardHolderPanel extends JPanel {
     }
 
     public void setFlashcardVisibility(boolean visibility) {
+        //if not visible but supposed to be visible, then play animation in
         if (!flashcardHolderPanel.isVisible() && visibility) {
-            centerLayoutLP.playBackgroundScrollAnimation(1000, () -> {
+            centerLayoutLP.playBackgroundScrollAnimationIn(1000, () -> {
                 flashcardHolderPanel.setVisible(true);
             });
-        } else flashcardHolderPanel.setVisible(visibility);
+        }
+        // if visible but not supposed to be visible, then play animation out
+        if(flashcardHolderPanel.isVisible() && !visibility) {
+            flashcardHolderPanel.setVisible(false);
+            centerLayoutLP.playBackgroundScrollAnimationOut(1000, () -> {});
+        }
     }
 
 
