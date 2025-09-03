@@ -1,9 +1,10 @@
-package app.view;
+package app.view.flashcardPanel;
 
 import app.Style;
-import app.animation.AnimatedSprite;
 import app.controller.FolderController;
 import app.model.Flashcard;
+import app.view.*;
+import app.view.actionPanel.ActionHolderPanel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -18,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static app.view.FlashcardPanelType.FLASHCARD;
+import static app.view.flashcardPanel.FlashcardPanelType.FLASHCARD;
 
 public class FlashcardHolderPanel extends JPanel {
     private FlashcardPanel flashcardPanel;
@@ -26,13 +27,12 @@ public class FlashcardHolderPanel extends JPanel {
     private RemoveFlashcardPanel removeFlashcardPanel;
     private RemoveConfirmationFlashcardPanel removeConfirmationFlashcardPanel;
     private EditFlashcardPanel editFlashcardPanel;
-    private FlashcardActionPanel flashcardActionPanel;
+    private ActionHolderPanel actionHolderPanel;
     private static List<Flashcard> flashcards;
     private static String fileName;
     private static Flashcard currentFlashcard;
-    private int backgroundOffsetX;
     private JPanel outerPanel;
-    private JPanel flashcardHolderPanel;
+    private JPanel flashcardHolder;
     private CardLayout cardLayout;
     private FlashcardPanelType currentFlashcardType;
     private CenterLayoutLP centerLayoutLP;
@@ -135,7 +135,6 @@ public class FlashcardHolderPanel extends JPanel {
     }
     
     private void setUp() {
-        //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
         fileName = FolderController.getCurrentFolderPath();
         flashcardPanel = new FlashcardPanel("Start", "Back", this);
@@ -144,51 +143,56 @@ public class FlashcardHolderPanel extends JPanel {
         removeConfirmationFlashcardPanel = new RemoveConfirmationFlashcardPanel();
         editFlashcardPanel = new EditFlashcardPanel(this);
 
-        flashcardActionPanel = new FlashcardActionPanel(this);
+        actionHolderPanel = new ActionHolderPanel(this);
 
         outerPanel = new JPanel();
         outerPanel.setOpaque(false);
-        outerPanel.setLayout(new GridBagLayout());
+        outerPanel.setLayout(new BorderLayout());
         outerPanel.setBorder(BorderFactory.createMatteBorder(2, 2, 0, 0, Style.OUTLINE_COLOR));
+//        outerPanel.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createMatteBorder(2, 2, 0, 0, Color.BLACK),
+//                BorderFactory.createEmptyBorder(100, 200, 100, 200)
+//        ));
 
         cardLayout = new CardLayout();
-        flashcardHolderPanel = new JPanel(cardLayout);
-        flashcardHolderPanel.setOpaque(false);
+        flashcardHolder = new JPanel(cardLayout);
+        flashcardHolder.setOpaque(false);
 
         FolderController.addPropertyChangeListener(evt -> {
             study();
             setFlashcardPanelType(FLASHCARD);
         });
 
-        add(flashcardActionPanel, BorderLayout.NORTH);
-        flashcardHolderPanel.add(flashcardPanel, "FlashcardPanel");
-        flashcardHolderPanel.add(addFlashcardPanel, "AddFlashcardPanel");
-        flashcardHolderPanel.add(removeFlashcardPanel, "RemoveFlashcardPanel");
-        flashcardHolderPanel.add(removeConfirmationFlashcardPanel, "RemoveConfirmationFlashcardPanel");
-        flashcardHolderPanel.add(editFlashcardPanel, "EditFlashcardPanel");
-        flashcardHolderPanel.setVisible(false);
-        outerPanel.add(flashcardHolderPanel);
+        add(actionHolderPanel, BorderLayout.NORTH);
+        flashcardHolder.add(flashcardPanel, "FlashcardPanel");
+        flashcardHolder.add(addFlashcardPanel, "AddFlashcardPanel");
+        flashcardHolder.add(removeFlashcardPanel, "RemoveFlashcardPanel");
+        flashcardHolder.add(removeConfirmationFlashcardPanel, "RemoveConfirmationFlashcardPanel");
+        flashcardHolder.add(editFlashcardPanel, "EditFlashcardPanel");
+        flashcardHolder.setVisible(false);
+        outerPanel.add(flashcardHolder);
         add(outerPanel, BorderLayout.CENTER);
     }
 
 
     public void setFlashcardPanelType(FlashcardPanelType panelType) {
-        cardLayout.show(flashcardHolderPanel, panelType.getName());
+        cardLayout.show(flashcardHolder, panelType.getName());
         currentFlashcardType = panelType;
 
+        //If the default folder is open, show flashcard panel when adding flashcard
         if (!"./src/FlashcardStorage/Default.json".equals(FolderController.getCurrentFolderPath())
                 && panelType == FlashcardPanelType.ADD) {
             setFlashcardVisibility(true);
         }
 
         if (panelType == FlashcardPanelType.FLASHCARD) {
-            flashcardActionPanel.styleButton(0);
+            actionHolderPanel.styleButton(0);
         } else if (panelType == FlashcardPanelType.ADD) {
-            flashcardActionPanel.styleButton(1);
+            actionHolderPanel.styleButton(1);
         } else if (panelType == FlashcardPanelType.REMOVE) {
-            flashcardActionPanel.styleButton(2);
+            actionHolderPanel.styleButton(2);
         } else if (panelType == FlashcardPanelType.EDIT) {
-            flashcardActionPanel.styleButton(3);
+            actionHolderPanel.styleButton(3);
             editFlashcardPanel.updateTextPanes();
         }
     }
@@ -210,14 +214,16 @@ public class FlashcardHolderPanel extends JPanel {
 
     public void setFlashcardVisibility(boolean visibility) {
         //if not visible but supposed to be visible, then play animation in
-        if (!flashcardHolderPanel.isVisible() && visibility) {
+        if (!flashcardHolder.isVisible() && visibility) {
             centerLayoutLP.playBackgroundScrollAnimationIn(1000, () -> {
-                flashcardHolderPanel.setVisible(true);
+                flashcardHolder.setVisible(true);
+                actionHolderPanel.flip();
             });
         }
         // if visible but not supposed to be visible, then play animation out
-        if(flashcardHolderPanel.isVisible() && !visibility) {
-            flashcardHolderPanel.setVisible(false);
+        if(flashcardHolder.isVisible() && !visibility) {
+            flashcardHolder.setVisible(false);
+            actionHolderPanel.flip();
             centerLayoutLP.playBackgroundScrollAnimationOut(1000, () -> {});
         }
     }

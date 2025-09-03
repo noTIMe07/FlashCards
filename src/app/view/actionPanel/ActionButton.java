@@ -1,4 +1,4 @@
-package app.view;
+package app.view.actionPanel;
 
 import app.Style;
 
@@ -9,8 +9,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 
-public class JActionButton extends JButton {
-    public JActionButton(String name, String filepath) {
+public class ActionButton extends JButton {
+    public ActionButton(String name, String filepath) {
         setBackground(Style.ACTIONBUTTON_COLOR);
         setFocusPainted(false);
         setBorderPainted(true);

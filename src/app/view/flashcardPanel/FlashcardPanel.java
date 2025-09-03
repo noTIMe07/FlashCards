@@ -1,8 +1,6 @@
-package app.view;
+package app.view.flashcardPanel;
 
 import app.Style;
-
-import app.view.FlashcardHolderPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -29,7 +27,7 @@ public class FlashcardPanel extends JPanel {
 
         setLayout(new BorderLayout());
         setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
-        setPreferredSize(new Dimension(1000, 700));
+        //setPreferredSize(new Dimension(1000, 700));
 
         // Create card layout for flashcard front/back
         cardLayout = new CardLayout();
@@ -54,14 +52,23 @@ public class FlashcardPanel extends JPanel {
         frontCard.setBorder(BorderFactory.createLineBorder(Style.OUTLINE_COLOR, 4, true));
         frontCard.add(centerButton, BorderLayout.CENTER);
 
+        JPanel frontButtonHolder = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        frontButtonHolder.setBorder(BorderFactory.createEmptyBorder(0, 0, 10,0));
+        frontButtonHolder.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
+
         // Front Flip Button
         flipButton = new JButton("Flip");
         flipButton.setFont(new Font("SansSerif", Font.BOLD, 16));
         flipButton.setBackground(new Color(255, 149, 128));
         flipButton.setForeground(Color.WHITE);
         flipButton.setFocusPainted(false);
-        flipButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        frontCard.add(flipButton, BorderLayout.SOUTH);
+        //flipButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        flipButton.setBorder(BorderFactory.createLineBorder(Style.OUTLINE_COLOR, 3, true));
+        flipButton.setPreferredSize(new Dimension(672, 60));
+        flipButton.setMinimumSize(new Dimension(672, 60));
+        flipButton.setMaximumSize(new Dimension(672, 60));
+        frontButtonHolder.add(flipButton);
+        frontCard.add(frontButtonHolder, BorderLayout.SOUTH);
 
         // Back (answer)
         answerLabel = createCardLabel(answer);
@@ -71,14 +78,18 @@ public class FlashcardPanel extends JPanel {
         backCard.add(answerLabel, BorderLayout.CENTER);
 
         //Back Card buttons
+        JPanel backButtonHolder = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        backButtonHolder.setBorder(BorderFactory.createEmptyBorder(0, 0, 10,0));
+        backButtonHolder.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         JPanel backCardButtons = new JPanel(new BorderLayout());
+        backCardButtons.setBorder(BorderFactory.createLineBorder(Style.OUTLINE_COLOR, 3, true));
 
         //reverseButton
         reverseButton = new JButton("←");
         reverseButton.setFont(new Font("SansSerif", Font.BOLD, 16));
         reverseButton.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         reverseButton.setFocusPainted(false);
-        reverseButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        reverseButton.setBorder(BorderFactory.createEmptyBorder(3, 25, 3, 25));
         backCardButtons.add(reverseButton, BorderLayout.WEST);
 
         //answer Buttons
@@ -91,7 +102,10 @@ public class FlashcardPanel extends JPanel {
         wrongButton.setBackground(new Color(255, 149, 128));
         wrongButton.setForeground(Color.WHITE);
         wrongButton.setFocusPainted(false);
-        wrongButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        wrongButton.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 3));
+        wrongButton.setPreferredSize(new Dimension(300, 54));
+        wrongButton.setMinimumSize(new Dimension(300, 54));
+        wrongButton.setMaximumSize(new Dimension(300, 54));
         answerButtons.add(wrongButton);
 
         //rightButton
@@ -100,12 +114,16 @@ public class FlashcardPanel extends JPanel {
         rightButton.setBackground(new Color(104, 166, 145));
         rightButton.setForeground(Color.WHITE);
         rightButton.setFocusPainted(false);
-        rightButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        rightButton.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
+        rightButton.setPreferredSize(new Dimension(300, 54));
+        rightButton.setMinimumSize(new Dimension(300, 54));
+        rightButton.setMaximumSize(new Dimension(300, 54));
         answerButtons.add(rightButton);
 
         //adding to Buttons and Cards to layout
         backCardButtons.add(answerButtons, BorderLayout.CENTER);
-        backCard.add(backCardButtons, BorderLayout.SOUTH);
+        backButtonHolder.add(backCardButtons);
+        backCard.add(backButtonHolder, BorderLayout.SOUTH);
         cardContainer.add(frontCard, "question");
         cardContainer.add(backCard, "answer");
         add(cardContainer, BorderLayout.CENTER);

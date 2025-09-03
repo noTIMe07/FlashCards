@@ -3,6 +3,7 @@ package app.view;
 import app.animation.AnimatedSprite;
 import app.animation.NodeId;
 import app.animation.StaticSprite;
+import app.view.flashcardPanel.FlashcardHolderPanel;
 
 import javax.swing.*;
 import java.awt.*;

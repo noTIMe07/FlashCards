@@ -3,10 +3,7 @@ package app.view;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +25,7 @@ public class FolderPanel extends JPanel {
     private JButton recycleButton;
     private JPanel wrapper;
     private JPanel inner;
+    private CardLayout cardLayout;
     Gson gson;
 
     public FolderPanel(String name_, CenterLayoutLP centerLayoutLP) {
@@ -61,6 +59,7 @@ public class FolderPanel extends JPanel {
 
     //Updates folder border if folder is clicked
     public void setFolderBorder(){
+        System.out.println("Filename: " + filename + "\nCurrent Path: " + FolderController.getCurrentFolderPath());
         if(Objects.equals(filename, FolderController.getCurrentFolderPath())){
             inner.setBorder(new CompoundBorder(
                     new LineBorder(Style.OUTLINE_COLOR, 2, false),
@@ -126,28 +125,49 @@ public class FolderPanel extends JPanel {
         folderButton.setMinimumSize(new Dimension(50, 60));
         folderButton.setAlignmentY(Component.CENTER_ALIGNMENT);
 
-        //If folder Button clicked then set active folder
-        folderButton.addActionListener(e -> {
-            FolderController.setCurrentFolderPath(filename);
+        //If the folder Button is clicked then set to active folder
+        //If the folder Button is double-clicked then rename folder
+        folderButton.addMouseListener(new MouseAdapter() {
+            //click Timer detects double click
+            Timer clickTimer;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    //If the clickTimer exists and is running then stop, thus canceling the single click action
+                    if (clickTimer != null && clickTimer.isRunning()) clickTimer.stop();
+                    renameFolder();
+                } else if (e.getClickCount() == 1) {
+                    //If the clicked folder is not already active, set active to avoid delay in case of single click
+                    if(!Objects.equals(FolderController.getCurrentFolderPath(), filename)){
+                        FolderController.setCurrentFolderPath(filename);
+                    }
+                    else{
+                        //The clickTimer sets the delay to detect double-click
+                        clickTimer = new Timer(250, ev -> {
+                            //After 250ms no double click is detected, then single click action is performed
+                            FolderController.setCurrentFolderPath(filename);
+                        });
+                        clickTimer.setRepeats(false);
+                        clickTimer.start();
+                    }
+                }
+            }
         });
 
         //Button Wrapper to hold name or folder button
-        wrapper = new JPanel();
+        wrapper = new JPanel(cardLayout);
         wrapper.setLayout(new BorderLayout());
         wrapper.setOpaque(false);
-
-        //Manage name field and folder Button
-        if(name.isEmpty()){
-            addNameField();
-        }
-        else{
-            wrapper.add(folderButton, BorderLayout.CENTER);
-            wrapper.revalidate();
-            wrapper.repaint();
-        }
         //Wrapper Size
         wrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
         wrapper.setPreferredSize(new Dimension(150, 60));
+        wrapper.add(folderButton);
+
+        //Manage name field and folder Button
+        if(name.isEmpty()){
+            addNameField("New Folder");
+        }
         inner.add(wrapper);
 
         //Space in the middle
@@ -186,11 +206,16 @@ public class FolderPanel extends JPanel {
     //Save name, set folder name to name, replace text field with label
     private boolean submitNameField(JTextField nameField){
         //Get name from Name Field
-        name = nameField.getText().trim();
+        nameField.setForeground(Color.BLACK);
+        String tmpName = nameField.getText().trim();
         //If name includes characters that are not numbers of letters then don't submit
-        if (!name.matches("[a-zA-Z0-9 ]*")||name.isEmpty()||(new File("./src/FlashcardStorage/"+name+".json").exists())){
+        if (!tmpName.matches("[a-zA-Z0-9 ]*")||tmpName.isEmpty()){
             return false;
         }
+        if((new File("./src/FlashcardStorage/"+tmpName+".json").exists()) && !tmpName.equals(name)){
+            return false;
+        }
+        name = tmpName;
         //Rename current folder name to new folder name
         new File(filename).renameTo(new File("./src/FlashcardStorage/"+name+".json"));
         //Update file name and current active folder
@@ -199,10 +224,9 @@ public class FolderPanel extends JPanel {
         FolderController.setCurrentFolderPath(filename);
 
         // Replace text field with label
-        int index = wrapper.getComponentZOrder(nameField);
         wrapper.remove(nameField);
         folderButton.setText(name);
-        wrapper.add(folderButton, index);
+        wrapper.add(folderButton);
         wrapper.revalidate();
         wrapper.repaint();
 
@@ -210,8 +234,9 @@ public class FolderPanel extends JPanel {
     }
 
     //Add name field to UI
-    private void addNameField(){
-        JTextField nameField = new JTextField("New Folder");
+    private void addNameField(String content){
+        FolderController.setCurrentFolderPath(filename);
+        JTextField nameField = new JTextField(content);
         //Fame Field style
         nameField.setFont(Style.FOLDER_FONT);
         nameField.setOpaque(false);
@@ -221,6 +246,7 @@ public class FolderPanel extends JPanel {
         //Update current folder to this folder
         FolderController.setCurrentFolderPath(filename);
         //Add Name Field to Wrapper
+        wrapper.remove(folderButton);
         wrapper.add(nameField);
         //Set focus on Name Field
         SwingUtilities.invokeLater(() -> nameField.requestFocusInWindow());
@@ -229,18 +255,25 @@ public class FolderPanel extends JPanel {
             @Override
             public void keyReleased(KeyEvent e) {
                 String text = nameField.getText();
-                if (text.matches("[a-zA-Z0-9 ]*")) {
-                    nameField.setForeground(Color.BLACK); // Valid input
-                } else {
-                    nameField.setForeground(Color.RED);   // Invalid input
+                if((new File("./src/FlashcardStorage/"+text+".json").exists()) && !Objects.equals(text, name)) {
+                    nameField.setForeground(Color.RED);
                 }
+                else if (!text.matches("[a-zA-Z0-9 ]*") && !text.isEmpty()) {
+                    nameField.setForeground(Color.RED); // Valid input
+                } else nameField.setForeground(Color.BLACK);   // Invalid input
             }
         });
         //When focus lost submit file or delete it
         nameField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                if(!submitNameField(nameField)) deleteFolder();
+                if(!submitNameField(nameField)){
+                    if(name.isEmpty()) deleteFolder();
+                    else{
+                        nameField.setText(name);
+                        submitNameField(nameField);
+                    }
+                }
             }
         });
         //When enter pressed then submit Name Field
@@ -266,5 +299,9 @@ public class FolderPanel extends JPanel {
 
         //Update mainPanel
         centerLayoutLP.setFlashcardVisibility(false);
+    }
+
+    public void renameFolder(){
+        addNameField(name);
     }
 }

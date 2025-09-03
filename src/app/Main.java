@@ -25,9 +25,9 @@ double click folder to rename
 
 Cat:
 
-When flashcard is shown then action buttons, else cat features
+When flashcard is shown then action buttons, else cat features: Roadmap
 roadmap with cat items as rewards
-nice background and sprtes
+nice background and sprites
 fix the sleeping bug
 
 Shipping:
