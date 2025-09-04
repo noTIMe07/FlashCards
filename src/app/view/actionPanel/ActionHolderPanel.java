@@ -24,8 +24,8 @@ public class ActionHolderPanel extends JPanel {
         catActionPanel.styleButton(button);
     }
 
-    public void flip(){
-        cardLayout.next(holderPanel);
+    public void show(String name){
+        cardLayout.show(holderPanel, name);
     }
 
     public void setup(){

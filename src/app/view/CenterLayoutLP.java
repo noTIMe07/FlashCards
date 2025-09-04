@@ -165,5 +165,7 @@ public class CenterLayoutLP extends JLayeredPane {
         chairStaticSprite.recalculatePositionAndScale(size.width, size.height);
     }
 
-
+    public boolean isAnimatingBackground(){
+        return isAnimatingBackground;
+    }
 }

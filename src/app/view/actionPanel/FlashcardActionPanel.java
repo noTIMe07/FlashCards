@@ -47,7 +47,7 @@ public class FlashcardActionPanel extends JPanel {
 
     private void setupButtons(){
         addFlashcardButton.addActionListener(e -> {
-            if(flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD)){
+            if(flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD) || flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.EMPTY)){
                 flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.ADD);
             }
         });

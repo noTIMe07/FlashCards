@@ -10,8 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CatActionPanel extends JPanel {
-    private ActionButton settingsButton;
-    private ActionButton addFlashcardButton;
+    private ActionButton catTrailButton;
+    private ActionButton inventoryButton;
     private JPanel buttonHolder;
     private FlashcardHolderPanel flashcardHolderPanel;
 
@@ -37,33 +37,45 @@ public class CatActionPanel extends JPanel {
         buttonHolder.setOpaque(false);
         setLayout(new GridLayout(1, 3, 4, 0));
 
-        settingsButton = new ActionButton("Settings", "/Icons/flashcard_add.png");
-        addFlashcardButton = new ActionButton("Add", "/Icons/flashcard_add.png");
+        catTrailButton = new ActionButton("Cat Trail", "/Icons/flashcard_add.png");
+        inventoryButton = new ActionButton("Inventory", "/Icons/flashcard_add.png");
 
-        buttonHolder.add(addFlashcardButton);
-        buttonHolder.add(settingsButton);
+        buttonHolder.add(inventoryButton);
+        buttonHolder.add(catTrailButton);
 
         add(buttonHolder);
     }
 
     private void setupButtons(){
-        addFlashcardButton.addActionListener(e -> {
-            if(flashcardHolderPanel.getFlashcardPanelType().equals(FlashcardPanelType.FLASHCARD)){
-                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.ADD);
+        inventoryButton.addActionListener(e -> {
+            if(flashcardHolderPanel.getFlashcardPanelType() == FlashcardPanelType.INVENTORY){
+                flashcardHolderPanel.setFlashcardVisibility(false);
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
             }
+            else flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.INVENTORY);
+        });
+
+        catTrailButton.addActionListener(e -> {
+            if(flashcardHolderPanel.getFlashcardPanelType() == FlashcardPanelType.TRAIL){
+                flashcardHolderPanel.setFlashcardVisibility(false);
+                flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.FLASHCARD);
+            }
+            else flashcardHolderPanel.setFlashcardPanelType(FlashcardPanelType.TRAIL);
         });
     }
 
     // 1 for add button activated, 0 for all
     public void styleButton(int button){
-        if(FolderController.getCurrentFolderPath().equals("./src/FlashcardStorage/Default.json")) return;
-
+        System.out.println(button);
         if(button==0){
-            addFlashcardButton.setActionButtonActive(false);
+            inventoryButton.setActionButtonActive(false);
+            catTrailButton.setActionButtonActive(false);
         }
         else{
-            if (button == 1) addFlashcardButton.setActionButtonActive(true);
-            else addFlashcardButton.setActionButtonActive(false);
+            if (button == 4) catTrailButton.setActionButtonActive(true);
+            else catTrailButton.setActionButtonActive(false);
+            if (button == 5) inventoryButton.setActionButtonActive(true);
+            else inventoryButton.setActionButtonActive(false);
         }
     }
 }

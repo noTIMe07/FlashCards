@@ -19,7 +19,7 @@ public class FolderController {
     public static void setCurrentFolderPath(String newFolderPath) {
         String defaultFolderPath = "./src/FlashcardStorage/Default.json";
 
-        // If new and current folder path are the same then stick with default folder path
+        // If new and current folder path are the same then change to default folder path
         if(Objects.equals(currentFolderPath, newFolderPath)) currentFolderPath = defaultFolderPath;
         else currentFolderPath = newFolderPath;
 

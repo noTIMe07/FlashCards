@@ -59,7 +59,6 @@ public class FolderPanel extends JPanel {
 
     //Updates folder border if folder is clicked
     public void setFolderBorder(){
-        System.out.println("Filename: " + filename + "\nCurrent Path: " + FolderController.getCurrentFolderPath());
         if(Objects.equals(filename, FolderController.getCurrentFolderPath())){
             inner.setBorder(new CompoundBorder(
                     new LineBorder(Style.OUTLINE_COLOR, 2, false),
@@ -78,7 +77,6 @@ public class FolderPanel extends JPanel {
         if(new File(filename).isFile()){
             return;
         }
-        System.out.println(filename);
         try (FileWriter writer = new FileWriter(filename)) {
             gson.toJson(flashcards, writer);;
         } catch (IOException e) {
@@ -133,6 +131,8 @@ public class FolderPanel extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if(centerLayoutLP.isAnimatingBackground()) return;
+
                 if (e.getClickCount() == 2) {
                     //If the clickTimer exists and is running then stop, thus canceling the single click action
                     if (clickTimer != null && clickTimer.isRunning()) clickTimer.stop();
@@ -220,8 +220,6 @@ public class FolderPanel extends JPanel {
         new File(filename).renameTo(new File("./src/FlashcardStorage/"+name+".json"));
         //Update file name and current active folder
         filename="./src/FlashcardStorage/"+name+".json";
-        System.out.println(filename);
-        FolderController.setCurrentFolderPath(filename);
 
         // Replace text field with label
         wrapper.remove(nameField);
@@ -235,7 +233,9 @@ public class FolderPanel extends JPanel {
 
     //Add name field to UI
     private void addNameField(String content){
-        FolderController.setCurrentFolderPath(filename);
+        if(!Objects.equals(FolderController.getCurrentFolderPath(), filename)){
+            FolderController.setCurrentFolderPath(filename);
+        }
         JTextField nameField = new JTextField(content);
         //Fame Field style
         nameField.setFont(Style.FOLDER_FONT);
@@ -243,11 +243,12 @@ public class FolderPanel extends JPanel {
         nameField.setBorder(null);
         nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, nameField.getPreferredSize().height));
         nameField.setHorizontalAlignment(JTextField.CENTER);
-        //Update current folder to this folder
-        FolderController.setCurrentFolderPath(filename);
+
         //Add Name Field to Wrapper
         wrapper.remove(folderButton);
         wrapper.add(nameField);
+        wrapper.revalidate();
+        wrapper.repaint();
         //Set focus on Name Field
         SwingUtilities.invokeLater(() -> nameField.requestFocusInWindow());
         //When letter input is not number of letter then turn text red

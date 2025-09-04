@@ -19,26 +19,36 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static app.view.flashcardPanel.FlashcardPanelType.FLASHCARD;
+import static app.view.flashcardPanel.FlashcardPanelType.*;
 
 public class FlashcardHolderPanel extends JPanel {
+
+    //Panels
     private FlashcardPanel flashcardPanel;
+    private EmptyFlashcardPanel emptyFlashcardPanel;
     private AddFlashcardPanel addFlashcardPanel;
     private RemoveFlashcardPanel removeFlashcardPanel;
     private RemoveConfirmationFlashcardPanel removeConfirmationFlashcardPanel;
     private EditFlashcardPanel editFlashcardPanel;
+    private CatTrailPanel catTrailPanel;
+    private CatInventoryPanel catInventoryPanel;
     private ActionHolderPanel actionHolderPanel;
-    private static List<Flashcard> flashcards;
-    private static String fileName;
-    private static Flashcard currentFlashcard;
+
+    // Layout components
     private JPanel outerPanel;
     private JPanel flashcardHolder;
     private CardLayout cardLayout;
+
+    // Flashcard data
+    private static List<Flashcard> flashcards;
+    private static String fileName;
+    private static Flashcard currentFlashcard;
     private FlashcardPanelType currentFlashcardType;
-    private CenterLayoutLP centerLayoutLP;
+
+    private final CenterLayoutLP centerLayoutLP;
 
     public FlashcardHolderPanel(CenterLayoutLP centerLayoutLP) {
-        currentFlashcardType = FLASHCARD;
+        this.currentFlashcardType = FLASHCARD;
         this.centerLayoutLP = centerLayoutLP;
 
         setUp();
@@ -46,24 +56,29 @@ public class FlashcardHolderPanel extends JPanel {
         study();
     }
 
+    //Selects the next due flashcard or shows empty panel if none are due
     public void study() {
+        // Update filename if folder changed
         if (!Objects.equals(fileName, FolderController.getCurrentFolderPath())) {
             fileName = FolderController.getCurrentFolderPath();
             loadFile();
         }
+
         for (Flashcard card : flashcards) {
             int counter = card.getLearnedCounter();
             LocalDate dueDate = (card.getDateStudied()).plusDays(counter * counter);
+
             if (!dueDate.isAfter(LocalDate.now())) {
                 flashcardPanel.updateFlashcard(card.getFront(), card.getBack());
                 currentFlashcard = card;
-                setFlashcardVisibility(true);
+                setFlashcardPanelType(FLASHCARD);
                 return;
             }
         }
-        setFlashcardVisibility(false);
+        setFlashcardPanelType(EMPTY);
     }
 
+    //Checks whether the whole deck is learned.
     public boolean isDeckLearned() {
         for (Flashcard card : flashcards) {
             // If one card is not learned yet, then return false
@@ -73,24 +88,6 @@ public class FlashcardHolderPanel extends JPanel {
         }
         // If every card is learned, return true
         return true;
-    }
-
-
-    public void setLearned(boolean learned) {
-        // If the back panel is not showing, then return
-        if (flashcardPanel.isFront() || !flashcardPanel.isVisible()) return;
-        // If flashcard is not null, then set it learned
-        if (currentFlashcard != null) {
-            // If learned = true then add 1 to learned Counter else reset
-            if(learned) currentFlashcard.setLearnedCounter(currentFlashcard.getLearnedCounter() + 1);
-            else currentFlashcard.setLearnedCounter(0);
-            currentFlashcard.setDateStudied(LocalDate.now().toString());
-            flashcards.remove(currentFlashcard);
-            flashcards.add(currentFlashcard);
-            saveFile();
-        }
-        currentFlashcard = null;
-        study();
     }
 
     public void addFlashcard(String front, String back){
@@ -105,20 +102,10 @@ public class FlashcardHolderPanel extends JPanel {
         study();
     }
 
-    public void editFlashcard(String front, String back){
-        if(currentFlashcard==null) return;
-
-        currentFlashcard.setFront(front);
-        currentFlashcard.setBack(back);
-
-        saveFile();
-    }
-
     private void loadFile() {
         try (FileReader reader = new FileReader(fileName)) {
             Gson gson = new Gson();
-            Type flashcardListType = new TypeToken<List<Flashcard>>() {
-            }.getType();
+            Type flashcardListType = new TypeToken<List<Flashcard>>() {}.getType();
             flashcards = gson.fromJson(reader, flashcardListType);
         } catch (IOException e) {
             e.printStackTrace();
@@ -136,12 +123,17 @@ public class FlashcardHolderPanel extends JPanel {
     
     private void setUp() {
         setLayout(new BorderLayout());
+
+        //Panels
         fileName = FolderController.getCurrentFolderPath();
         flashcardPanel = new FlashcardPanel("Start", "Back", this);
+        emptyFlashcardPanel = new EmptyFlashcardPanel(this);
         addFlashcardPanel = new AddFlashcardPanel(this);
         removeFlashcardPanel = new RemoveFlashcardPanel(this);
         removeConfirmationFlashcardPanel = new RemoveConfirmationFlashcardPanel();
         editFlashcardPanel = new EditFlashcardPanel(this);
+        catTrailPanel = new CatTrailPanel(this);
+        catInventoryPanel = new CatInventoryPanel(this);
 
         actionHolderPanel = new ActionHolderPanel(this);
 
@@ -149,51 +141,84 @@ public class FlashcardHolderPanel extends JPanel {
         outerPanel.setOpaque(false);
         outerPanel.setLayout(new BorderLayout());
         outerPanel.setBorder(BorderFactory.createMatteBorder(2, 2, 0, 0, Style.OUTLINE_COLOR));
-//        outerPanel.setBorder(BorderFactory.createCompoundBorder(
-//                BorderFactory.createMatteBorder(2, 2, 0, 0, Color.BLACK),
-//                BorderFactory.createEmptyBorder(100, 200, 100, 200)
-//        ));
 
         cardLayout = new CardLayout();
         flashcardHolder = new JPanel(cardLayout);
         flashcardHolder.setOpaque(false);
 
+        //Folder listener
         FolderController.addPropertyChangeListener(evt -> {
-            study();
-            setFlashcardPanelType(FLASHCARD);
+            if(FolderController.getCurrentFolderPath()!="./src/FlashcardStorage/Default.json"){
+                study();
+                setFlashcardVisibility(true);
+            }
+            else{
+                setFlashcardVisibility(false);
+            }
         });
 
+        //Assemble layout
         add(actionHolderPanel, BorderLayout.NORTH);
         flashcardHolder.add(flashcardPanel, "FlashcardPanel");
+        flashcardHolder.add(emptyFlashcardPanel, "EmptyFlashcardPanel");
         flashcardHolder.add(addFlashcardPanel, "AddFlashcardPanel");
         flashcardHolder.add(removeFlashcardPanel, "RemoveFlashcardPanel");
         flashcardHolder.add(removeConfirmationFlashcardPanel, "RemoveConfirmationFlashcardPanel");
         flashcardHolder.add(editFlashcardPanel, "EditFlashcardPanel");
+        flashcardHolder.add(catTrailPanel, "CatTrailPanel");
+        flashcardHolder.add(catInventoryPanel, "CatInventoryPanel");
         flashcardHolder.setVisible(false);
+
         outerPanel.add(flashcardHolder);
         add(outerPanel, BorderLayout.CENTER);
     }
-
 
     public void setFlashcardPanelType(FlashcardPanelType panelType) {
         cardLayout.show(flashcardHolder, panelType.getName());
         currentFlashcardType = panelType;
 
-        //If the default folder is open, show flashcard panel when adding flashcard
-        if (!"./src/FlashcardStorage/Default.json".equals(FolderController.getCurrentFolderPath())
-                && panelType == FlashcardPanelType.ADD) {
-            setFlashcardVisibility(true);
+        if (panelType == TRAIL) setFlashcardVisibility(true);
+        if (panelType == INVENTORY) setFlashcardVisibility(true);
+
+        switch (panelType) {
+            case FLASHCARD:
+                actionHolderPanel.styleButton(0);
+                break;
+            case ADD:
+                actionHolderPanel.styleButton(1);
+                break;
+            case REMOVE:
+                actionHolderPanel.styleButton(2);
+                break;
+            case EDIT:
+                actionHolderPanel.styleButton(3);
+                editFlashcardPanel.updateTextPanes();
+                break;
+            case TRAIL:
+                actionHolderPanel.styleButton(4);
+                break;
+            case INVENTORY:
+                actionHolderPanel.styleButton(5);
+                break;
         }
 
-        if (panelType == FlashcardPanelType.FLASHCARD) {
-            actionHolderPanel.styleButton(0);
-        } else if (panelType == FlashcardPanelType.ADD) {
-            actionHolderPanel.styleButton(1);
-        } else if (panelType == FlashcardPanelType.REMOVE) {
-            actionHolderPanel.styleButton(2);
-        } else if (panelType == FlashcardPanelType.EDIT) {
-            actionHolderPanel.styleButton(3);
-            editFlashcardPanel.updateTextPanes();
+        if (panelType == TRAIL || panelType == INVENTORY) {
+            setFlashcardVisibility(true);
+        }
+    }
+
+    private void updateActionHolderPanel(){
+        boolean isFlashcardRelated =
+                currentFlashcardType == FLASHCARD ||
+                        currentFlashcardType == ADD ||
+                        currentFlashcardType == REMOVE ||
+                        currentFlashcardType == EDIT ||
+                        currentFlashcardType == EMPTY;
+
+        if (isFlashcardRelated && flashcardHolder.isVisible()) {
+            actionHolderPanel.show("FlashcardActionPanel");
+        } else {
+            actionHolderPanel.show("CatActionPanel");
         }
     }
 
@@ -203,12 +228,33 @@ public class FlashcardHolderPanel extends JPanel {
         }
     }
 
+    //Marks the current flashcard as learned or not.
+    public void setLearned(boolean learned) {
+        // If the back panel is not showing, then return
+        if (flashcardPanel.isFront() || !flashcardPanel.isVisible()) return;
+        if (currentFlashcard != null) return;
+
+        // If learned = true then add 1 to learned Counter else reset
+        if (learned) {
+            currentFlashcard.setLearnedCounter(currentFlashcard.getLearnedCounter() + 1);
+        } else {
+            currentFlashcard.setLearnedCounter(0);
+        }
+
+        currentFlashcard.setDateStudied(LocalDate.now().toString());
+        flashcards.remove(currentFlashcard);
+        flashcards.add(currentFlashcard);
+
+        saveFile();
+        currentFlashcard = null;
+        study();
+    }
+
     public void setFlashcardContent(String front, String back) {
         if (currentFlashcard == null) return;
 
         currentFlashcard.setFront(front);
         currentFlashcard.setBack(back);
-
         saveFile();
     }
 
@@ -217,17 +263,17 @@ public class FlashcardHolderPanel extends JPanel {
         if (!flashcardHolder.isVisible() && visibility) {
             centerLayoutLP.playBackgroundScrollAnimationIn(1000, () -> {
                 flashcardHolder.setVisible(true);
-                actionHolderPanel.flip();
+                updateActionHolderPanel();
             });
         }
         // if visible but not supposed to be visible, then play animation out
         if(flashcardHolder.isVisible() && !visibility) {
             flashcardHolder.setVisible(false);
-            actionHolderPanel.flip();
+            updateActionHolderPanel();
             centerLayoutLP.playBackgroundScrollAnimationOut(1000, () -> {});
         }
+        updateActionHolderPanel();
     }
-
 
     public FlashcardPanelType getFlashcardPanelType() {
         return currentFlashcardType;
