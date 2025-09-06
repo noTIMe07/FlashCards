@@ -5,6 +5,7 @@ import app.controller.FolderController;
 import app.model.Flashcard;
 import app.view.*;
 import app.view.actionPanel.ActionHolderPanel;
+import app.view.flashcardPanel.catTrailPanel.CatTrailPanel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -230,9 +231,10 @@ public class FlashcardHolderPanel extends JPanel {
 
     //Marks the current flashcard as learned or not.
     public void setLearned(boolean learned) {
+
         // If the back panel is not showing, then return
         if (flashcardPanel.isFront() || !flashcardPanel.isVisible()) return;
-        if (currentFlashcard != null) return;
+        if (currentFlashcard == null) return;
 
         // If learned = true then add 1 to learned Counter else reset
         if (learned) {

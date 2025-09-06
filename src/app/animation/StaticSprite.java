@@ -69,10 +69,6 @@ public class StaticSprite extends Sprite {
         return new Point(centerOffsetX, centerOffsetY);
     }
 
-    public double getScale(){
-        return spriteScale;
-    }
-
     @Override
     public void setBackgroundOffSetX(int backgroundOffSetX) {
         this.backgroundOffsetX = backgroundOffSetX;

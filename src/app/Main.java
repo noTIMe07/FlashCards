@@ -19,14 +19,10 @@ public class Main {
 
 /*
 Functionality:
-
-click folder to show default panel
-double click folder to rename
-
+cards left counter
 Cat:
 
-When flashcard is shown then action buttons, else cat features: Roadmap
-roadmap with cat items as rewards
+roadmap with cat items as rewards, Cat inventory
 nice background and sprites
 fix the sleeping bug
 
