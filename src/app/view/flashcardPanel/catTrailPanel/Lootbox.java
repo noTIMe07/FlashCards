@@ -65,7 +65,7 @@ public class Lootbox {
 
         this.x = x;
         this.y = y;
-        g2.drawImage(FRAMES[elapsedFrames], x - 100, y - 140, FRAME_WIDTH, FRAME_HEIGHT, null);
+        g2.drawImage(FRAMES[elapsedFrames], x - 95, y - 140, FRAME_WIDTH, FRAME_HEIGHT, null);
     }
 
     public boolean isAnimating() {

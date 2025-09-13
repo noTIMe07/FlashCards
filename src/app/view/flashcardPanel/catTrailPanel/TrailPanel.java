@@ -4,13 +4,9 @@ import app.Style;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.imageio.ImageIO;
 
 public class TrailPanel extends JPanel {
     private int flashcardsStudied;
@@ -21,23 +17,22 @@ public class TrailPanel extends JPanel {
     private final Timer timer;
     private final Random random;
 
-    private final int step = 300;
+    private final int milestonePixelSpacing = 300;
+    private final int milestoneSpacing = 250;
     private int tick;
     private final List<Lootbox> lootboxes = new ArrayList<>();
 
-    private final int frameWidth = 288;
     private final int frameHeight = 192;
-    private final int totalFrames = 5;
 
-    public TrailPanel(int width, int height, int flashcardsStudied, int maxMilestone) {
-        this.customWidth = width;
+    public TrailPanel(int height, int flashcardsStudied, int maxMilestone) {
+        this.customWidth = maxMilestone * milestonePixelSpacing / milestoneSpacing;
         this.customHeigth = height;
         this.flashcardsStudied = flashcardsStudied;
         this.maxMilestone = maxMilestone;
         random = new Random();
         tick = 0;
 
-        setPreferredSize(new Dimension(customWidth, customHeigth));
+        setPreferredSize(new Dimension(customWidth + 300, customHeigth));
         setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
         setLayout(null);
 
@@ -55,7 +50,7 @@ public class TrailPanel extends JPanel {
             // Randomly trigger exactly as you suggested:
             // pick r in [0, 1000); if r < lootboxes.size(), trigger that index
             if (!lootboxes.isEmpty()) {
-                int r = random.nextInt(100);
+                int r = random.nextInt(200);
                 if (r < lootboxes.size()) {
                     Lootbox box = lootboxes.get(r);
                     if (!box.isAnimating()) {
@@ -72,7 +67,7 @@ public class TrailPanel extends JPanel {
     private void createLootboxes(){
         int lootboxX;
         int lootboxY;
-        for (int x = 50 + step; x < 50 + customWidth; x += step){
+        for (int x = 50 + milestonePixelSpacing; x <= 50 + customWidth; x += milestonePixelSpacing){
             lootboxX = x - 100;
             lootboxY = 600 - 20 - frameHeight - 150;
             lootboxes.add(new Lootbox(lootboxX, lootboxY, "./src/Sprites/Lootbox_Double.png"));
@@ -104,6 +99,7 @@ public class TrailPanel extends JPanel {
 
         // Progress
         double percent = (double) flashcardsStudied / maxMilestone;
+        if (percent > 1) percent = 1;
         int progressWidth = (int) (customWidth * percent);
         g2.setColor(Style.ADDFOLDERBUTTON_COLOR);
         g2.fillRoundRect(50, y - (customHeigth / 2), progressWidth, customHeigth, customHeigth, customHeigth);
@@ -118,33 +114,38 @@ public class TrailPanel extends JPanel {
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
 
-        int milestonePoints = 250;
         int milestoneCount = 1;
 
         int counter = 0;
-        for (int x = 50 + step; x < 50 + customWidth; x += step) {
-            // Outer circle
-            g2.setColor(Color.BLACK);
-            g2.fillOval(x - outerRadius, y - outerRadius, outerDiameter, outerDiameter);
-
-            // Inner circle
-            g2.setColor(Style.ADDFOLDERBUTTON_COLOR);
-            g2.fillOval(x - innerRadius, y - innerRadius, innerDiameter, innerDiameter);
-
-            // Milestone text
-            String text = String.valueOf(milestonePoints * milestoneCount++);
-            int textWidth = fm.stringWidth(text);
-            int textX = x - (textWidth / 2);
-            int textY = y + outerRadius + fm.getAscent() + 5;
-
-            g2.setColor(Color.BLACK);
-            g2.drawString(text, textX, textY);
+        for (int x = 50 + milestonePixelSpacing; x <= 50 + customWidth; x += milestonePixelSpacing) {
+            // Shadow oval
+            if(x <= 50 + progressWidth) g2.setColor(new Color(89,89,89));
+            else g2.setColor(new Color(200, 200, 200));
+            g2.fillOval(x - 100, (y/2) + 10, 200, 80);
 
             // Lootbox above circle
             if (counter < lootboxes.size()) {
                 lootboxes.get(counter).draw(g2, x, y/2);
             }
             counter++;
+
+            // Outer circle
+            g2.setColor(Color.BLACK);
+            g2.fillOval(x - outerRadius, y - outerRadius, outerDiameter, outerDiameter);
+
+            // Inner circle
+            if(x <= 50 + progressWidth) g2.setColor(Style.ADDFOLDERBUTTON_COLOR);
+            else g2.setColor(new Color(200, 200, 200));
+            g2.fillOval(x - innerRadius, y - innerRadius, innerDiameter, innerDiameter);
+
+            // Milestone text
+            String text = String.valueOf(milestoneSpacing * milestoneCount++);
+            int textWidth = fm.stringWidth(text);
+            int textX = x - (textWidth / 2);
+            int textY = y + outerRadius + fm.getAscent() + 5;
+
+            g2.setColor(Color.BLACK);
+            g2.drawString(text, textX, textY);
         }
 
         g2.dispose();

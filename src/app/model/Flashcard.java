@@ -1,8 +1,9 @@
 package app.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Flashcard {
+public class Flashcard implements Serializable {
     private String front;
     private String back;
     private int learnedCounter;

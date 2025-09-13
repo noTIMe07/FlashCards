@@ -1,6 +1,7 @@
 package app.view.flashcardPanel.catTrailPanel;
 
 import app.Style;
+import app.view.CustomScrollBarUI;
 import app.view.flashcardPanel.FlashcardHolderPanel;
 import app.view.flashcardPanel.FlashcardPanelType;
 
@@ -77,9 +78,24 @@ public class CatTrailPanel extends JPanel {
         centerPanel.setBackground(Style.FLASHCARD_BACKGROUND_COLOR);
 
         //Trail
-        trailPanel = new TrailPanel(10000, 16, 100, 1000);
+        trailPanel = new TrailPanel(16, 690, 10000);
 
-        centerPanel.add(trailPanel);
+        // Wrap trail in JScrollPane
+        JScrollPane scrollPane = new JScrollPane(trailPanel,
+                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        // Make it look cleaner (no border around the scroll pane)
+        scrollPane.setBorder(null);
+
+        JScrollBar hBar = scrollPane.getHorizontalScrollBar();
+        hBar.setUnitIncrement(30);
+        hBar.setPreferredSize(new Dimension(0, 22));
+        hBar.setUI(new CustomScrollBarUI());
+
+        // Add to center panel
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+
         cardContainer.add(centerPanel, BorderLayout.CENTER);
     }
 
